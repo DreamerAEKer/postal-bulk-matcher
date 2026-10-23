@@ -471,63 +471,71 @@
     }
 
     .s-row-main {
-      padding: 9px 11px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      cursor: pointer;
+    }
+
+    .s-line-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      cursor: pointer;
+      width: 100%;
     }
 
-    /* Left: Price Badge + Subtotal */
-    .s-left {
+    .s-rate-group {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 7px;
       min-width: 0;
+      white-space: nowrap;
     }
 
     .s-price-box {
-      min-width: 58px;
-      padding: 5px 7px;
-      border-radius: 8px;
-      background: #f1f5f9;
-      text-align: center;
+      padding: 3px 9px;
+      border-radius: 7px;
+      background: #0f172a;
+      color: white;
       font-weight: 800;
-      font-size: 15.5px;
-      color: #0f172a;
-      line-height: 1.15;
-      flex-shrink: 0;
+      font-size: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
     }
 
     .s-row-card.st-done .s-price-box {
-      background: #bbf7d0;
-      color: #14532d;
+      background: #15803d;
     }
 
     .s-row-card.st-partial .s-price-box {
-      background: #fde68a;
-      color: #78350f;
+      background: #d97706;
     }
 
-    .s-info {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
+    .s-amount-text {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      white-space: nowrap;
     }
 
-    .s-info-top {
+    .s-line-bottom {
       display: flex;
       align-items: center;
-      gap: 5px;
-      font-size: 14.5px;
-      font-weight: 800;
-      color: #0f172a;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
     }
 
-    .s-info-sub {
-      font-size: 12px;
-      font-weight: 600;
+    .s-status-text {
+      font-size: 12.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* Right: Stepper + Expand Chevron */
@@ -1283,12 +1291,12 @@
       let actionBtnLabel = 'ลงเลขที่ ▾';
 
       if (targetQ === 0 && recordedQ === 0) {
-        statusLine = `<span style="color:#94a3b8;">ไม่มีจำนวนในเรทนี้ (0 ชิ้น)</span>`;
+        statusLine = `<span style="color:#94a3b8;">⚪ 0 ชิ้น</span>`;
       } else if (recordedQ === 0) {
-        statusLine = `<span style="color:#475569;">ยังไม่ได้ลง • ต้องลง <b>${targetQ}</b> ชิ้น</span>`;
+        statusLine = `<span style="color:#475569;">⚪ ยังไม่ลง • ต้องลง <b>${targetQ}</b> ชิ้น</span>`;
       } else if (recordedQ < targetQ) {
         stateCls = 'st-partial';
-        statusLine = `<span style="color:#b45309;">🟡 ลงแล้ว <b>${recordedQ}</b> • เหลืออีก <b>${remainQ}</b> ชิ้น</span>`;
+        statusLine = `<span style="color:#b45309;">🟡 ลงแล้ว <b>${recordedQ}</b> • เหลือ <b>${remainQ}</b> ชิ้น</span>`;
         barColor = '#f59e0b';
         actionBtnLabel = `เหลือ ${remainQ} ▾`;
       } else if (recordedQ === targetQ) {
@@ -1299,7 +1307,7 @@
         if (targetQ > 0) completedRatesCount++;
       } else {
         stateCls = 'st-over';
-        statusLine = `<span style="color:#dc2626;">🔴 ลงเกินไป <b>${Math.abs(remainQ)}</b> ชิ้น! (ลงไป ${recordedQ})</span>`;
+        statusLine = `<span style="color:#dc2626;">🔴 เกินไป <b>${Math.abs(remainQ)}</b> ชิ้น! (${recordedQ}/${targetQ})</span>`;
         barColor = '#ef4444';
         actionBtnLabel = 'เกิน! ▾';
       }
@@ -1395,32 +1403,30 @@
       return `
         <div class="s-row-card ${stateCls}">
           <div class="s-row-main" onclick="toggleExpandRate(${idx})">
-            <div class="s-left">
-              <div class="s-price-box">
-                ${r.price}฿
-                ${r.isAR ? '<div style="font-size:9.5px; color:#854d0e;">AR</div>' : ''}
+            <div class="s-line-top">
+              <div class="s-rate-group">
+                <span class="s-price-box">เรท ${r.price} ฿</span>
+                ${r.isAR ? '<span class="badge-ar" style="font-size:11px; padding:1px 6px;">AR ตอบรับ</span>' : ''}
+                ${isLocked ? '<span style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; padding:1px 6px; border-radius:4px;">🔒 ล็อก</span>' : ''}
               </div>
-              <div class="s-info">
-                <div class="s-info-top">
-                  <span>เป็นเงิน ${subAmt.toLocaleString()} ฿</span>
-                  ${isLocked ? '<span style="font-size:10.5px; color:#b45309; background:#fef3c7; padding:0 5px; border-radius:4px;">🔒 ล็อก</span>' : ''}
-                </div>
-                <div class="s-info-sub">${statusLine}</div>
-              </div>
+              <div class="s-amount-text">เป็นเงิน ${subAmt.toLocaleString()} ฿</div>
             </div>
 
-            <div class="s-right" onclick="event.stopPropagation()">
-              <div class="qty-stepper" title="ปรับจำนวนชิ้นของเรทนี้">
-                <button onclick="stepRateQty(${idx}, ${targetQ}, -1)">−</button>
-                <input type="number" inputmode="numeric" min="0"
-                  class="${isLocked ? 'locked' : ''}"
-                  value="${targetQ}"
-                  oninput="updateRateFixedQty(${idx}, this.value)">
-                <button onclick="stepRateQty(${idx}, ${targetQ}, 1)">+</button>
+            <div class="s-line-bottom">
+              <div class="s-status-text">${statusLine}</div>
+              <div class="s-right" onclick="event.stopPropagation()">
+                <div class="qty-stepper" title="ปรับจำนวนชิ้นของเรทนี้">
+                  <button onclick="stepRateQty(${idx}, ${targetQ}, -1)">−</button>
+                  <input type="number" inputmode="numeric" min="0"
+                    class="${isLocked ? 'locked' : ''}"
+                    value="${targetQ}"
+                    oninput="updateRateFixedQty(${idx}, this.value)">
+                  <button onclick="stepRateQty(${idx}, ${targetQ}, 1)">+</button>
+                </div>
+                <button class="expand-pill" onclick="toggleExpandRate(${idx})">
+                  ${r.expanded ? 'พับ ▴' : actionBtnLabel}
+                </button>
               </div>
-              <button class="expand-pill" onclick="toggleExpandRate(${idx})">
-                ${r.expanded ? 'พับ ▴' : actionBtnLabel}
-              </button>
             </div>
           </div>
           ${recordedQ > 0 ? `<div class="s-thin-bar"><div class="s-thin-fill" style="width:${pct}%; background:${barColor};"></div></div>` : ''}
