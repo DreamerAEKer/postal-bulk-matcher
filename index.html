@@ -49,7 +49,6 @@
       padding-bottom: 60px;
     }
 
-    /* Sticky Compact Header */
     header {
       background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
       color: white;
@@ -158,6 +157,7 @@
       justify-content: space-between;
       gap: 8px;
       margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
     .section-title {
@@ -394,7 +394,7 @@
     }
 
     /* ===================================================================== */
-    /* STEP 2: CLEAN, COMPACT, SCANNABLE SUMMARY DASHBOARD                   */
+    /* STEP 2: SUMMARY DASHBOARD (FULL TEXT VISIBILITY - NEVER TRUNCATED)    */
     /* ===================================================================== */
     .summary-banner {
       border-radius: 11px;
@@ -440,11 +440,10 @@
       font-weight: 800;
     }
 
-    /* Clean Sleek Rate Row (No redundant text!) */
     .summary-list {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 8px;
     }
 
     .s-row-card {
@@ -474,24 +473,24 @@
       padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 8px;
       cursor: pointer;
     }
 
+    /* Row 1: Rate Badge + Stepper + Total Money */
     .s-line-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
       width: 100%;
     }
 
     .s-rate-group {
       display: flex;
       align-items: center;
-      gap: 7px;
-      min-width: 0;
-      white-space: nowrap;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     .s-price-box {
@@ -516,34 +515,60 @@
     }
 
     .s-amount-text {
-      font-size: 16px;
+      font-size: 15.5px;
       font-weight: 800;
       color: var(--primary-dark);
       white-space: nowrap;
     }
 
+    /* Row 2: Full Status Message (Never truncated!) + Controls */
     .s-line-bottom {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
       width: 100%;
+      flex-wrap: wrap;
     }
 
-    .s-status-text {
-      font-size: 12.5px;
+    .s-status-pill {
+      font-size: 13px;
       font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      /* Never cut off with ellipsis! */
+      white-space: normal;
+      word-break: keep-all;
     }
 
-    /* Right: Stepper + Expand Chevron */
+    .s-row-card.st-partial .s-status-pill {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .s-row-card.st-done .s-status-pill {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .s-row-card.st-over .s-status-pill {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
     .s-right {
       display: flex;
       align-items: center;
       gap: 6px;
-      flex-shrink: 0;
+      margin-left: auto;
     }
 
     .qty-stepper {
@@ -586,14 +611,15 @@
     }
 
     .expand-pill {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
-      padding: 5px 8px;
+      padding: 5px 9px;
       border-radius: 7px;
       background: #eff6ff;
       color: var(--secondary);
       border: 1px solid #bfdbfe;
       white-space: nowrap;
+      cursor: pointer;
     }
 
     .s-row-card.st-done .expand-pill {
@@ -602,7 +628,6 @@
       border-color: #86efac;
     }
 
-    /* Thin Bottom Progress Line */
     .s-thin-bar {
       height: 4px;
       width: 100%;
@@ -616,14 +641,42 @@
 
     /* Expanded Drawer */
     .s-drawer {
-      padding: 10px 11px;
-      border-top: 1px dashed #cbd5e1;
+      padding: 11px 12px;
+      border-top: 1.5px dashed #cbd5e1;
       background: #f8fafc;
+    }
+
+    .recorded-chip-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .rec-item {
+      background: white;
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid #16a34a;
+      border-radius: 8px;
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 12.5px;
+      flex-wrap: wrap;
+    }
+
+    .add-batch-panel {
+      background: white;
+      border: 1.5px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 10px;
     }
 
     .drawer-form {
       display: grid;
-      grid-template-columns: 74px 54px 1fr;
+      grid-template-columns: 78px 56px 1fr;
       gap: 6px;
       align-items: end;
       margin-bottom: 8px;
@@ -648,26 +701,6 @@
       background: white;
     }
 
-    .recorded-chip-list {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-top: 8px;
-    }
-
-    .rec-item {
-      background: white;
-      border: 1px solid #cbd5e1;
-      border-radius: 7px;
-      padding: 6px 9px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      font-size: 12.5px;
-      flex-wrap: wrap;
-    }
-
     .copy-bc-pill {
       font-family: 'Consolas', monospace;
       font-size: 12.5px;
@@ -684,6 +717,63 @@
       color: #dc2626;
       text-decoration: underline;
       font-weight: 800;
+    }
+
+    /* ===================================================================== */
+    /* STEP 3 (COLLAPSIBLE AT BOTTOM): POS COUNTER VERIFICATION LOG          */
+    /* ===================================================================== */
+    .pos-check-toggle {
+      width: 100%;
+      background: #0f172a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .pos-log-body {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .pos-line-item {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid var(--secondary);
+      border-radius: 9px;
+      padding: 9px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .pos-line-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 14.5px;
+      font-weight: 800;
+    }
+
+    .pos-line-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .sol-nav {
@@ -832,13 +922,13 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 2: สรุปรันตามเรทราคา (ดีไซน์กระชับ สะอาดตา เห็นครบในจอเดียว)  -->
+  <!-- ส่วนที่ 2: สรุปรันตามเรทราคา (แสดงข้อความครบ 100% + เพิ่มหมวดใหม่ได้เมื่อเหลือ) -->
   <!-- ===================================================================== -->
   <div class="card">
     <div class="section-head">
       <div class="section-title">
         <span class="step-num">2</span>
-        <span>สรุปรันตามเรทราคา (แตะที่เรทเพื่อลงยอด/เลขที่)</span>
+        <span>สรุปรันตามเรทราคา (แตะที่เรทเพื่อบันทึกยอด/เพิ่มหมวดเลข)</span>
       </div>
       <div style="display: flex; gap: 5px;">
         <button class="btn-sm" onclick="clearAllRecordedEntries()">🧹 ล้างยอดที่ลง</button>
@@ -846,10 +936,10 @@
       </div>
     </div>
 
-    <!-- แถบสรุปภาพรวมแบบกระชับ -->
+    <!-- แถบสรุปภาพรวม -->
     <div id="overallProgressBox" class="summary-banner"></div>
 
-    <!-- รายการเรทราคาแบบกระชับ อ่านง่าย ไม่ซ้ำซ้อน -->
+    <!-- รายการเรทราคา -->
     <div id="rateSummaryList" class="summary-list"></div>
 
     <!-- ปุ่มสลับรูปแบบคำตอบ -->
@@ -857,6 +947,22 @@
 
     <!-- ข้อสังเกตกรณีไม่ลงตัว -->
     <div id="diagnosticsArea"></div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- ส่วนที่ 3 (ซ่อนไว้ด้านล่างสุด): ตรวจสอบกับหน้าจอรับฝากทีละบรรทัด       -->
+  <!-- ===================================================================== -->
+  <div class="card" style="padding: 10px;">
+    <button class="pos-check-toggle" onclick="togglePosLogSection()">
+      <span id="posLogToggleTitle">🖥️ ตรวจสอบกับหน้าจอรับฝาก (0 รายการที่บันทึก)</span>
+      <span id="posLogToggleArrow">กดเพื่อแสดง ▾</span>
+    </button>
+    <div id="posLogContainer" style="display: none;">
+      <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+        <span>แสดงเรียงตามลำดับการกดบันทึก (บรรทัดที่ 1, 2, 3...) เพื่อเทียบกับหน้าจอรับฝาก</span>
+      </div>
+      <div id="posLogList" class="pos-log-body"></div>
+    </div>
   </div>
 
 </div>
@@ -959,11 +1065,12 @@
     ]
   };
 
-  const STORAGE_KEY = 'POSTAL_MOBILE_MATCHER_V6';
+  const STORAGE_KEY = 'POSTAL_MOBILE_MATCHER_V7';
 
   let state = {
     currentPresetTab: 'reg_doc',
     useFuelCharge: true,
+    showPosLog: false,
     targetTotalQty: 361,
     targetTotalAmount: 8033,
     customRates: [],
@@ -1255,6 +1362,7 @@
       summaryList.innerHTML = '';
       solNav.style.display = 'none';
       diagArea.innerHTML = '';
+      renderPosVerificationLog();
       return;
     }
 
@@ -1264,7 +1372,6 @@
     let activeRateCount = 0;
     let completedRatesCount = 0;
 
-    // Render sleek, non-redundant rows
     summaryList.innerHTML = state.selectedRates.map((r, idx) => {
       const isLocked = r.fixedQty !== null && r.fixedQty !== '' && !isNaN(r.fixedQty);
       const targetQ = activeSolution[r.id] !== undefined
@@ -1284,30 +1391,30 @@
       const remainQ = targetQ - recordedQ;
       const pct = targetQ > 0 ? Math.min(100, Math.round((recordedQ / targetQ) * 100)) : 0;
 
-      // Determine concise status message (no duplicate text!)
+      // Full Status Message (Never truncated!)
       let stateCls = '';
       let statusLine = '';
       let barColor = 'transparent';
       let actionBtnLabel = 'ลงเลขที่ ▾';
 
       if (targetQ === 0 && recordedQ === 0) {
-        statusLine = `<span style="color:#94a3b8;">⚪ 0 ชิ้น</span>`;
+        statusLine = `⚪ 0 ชิ้น`;
       } else if (recordedQ === 0) {
-        statusLine = `<span style="color:#475569;">⚪ ยังไม่ลง • ต้องลง <b>${targetQ}</b> ชิ้น</span>`;
+        statusLine = `⚪ ยังไม่ลง • ต้องลง <b>${targetQ.toLocaleString()} ชิ้น</b>`;
       } else if (recordedQ < targetQ) {
         stateCls = 'st-partial';
-        statusLine = `<span style="color:#b45309;">🟡 ลงแล้ว <b>${recordedQ}</b> • เหลือ <b>${remainQ}</b> ชิ้น</span>`;
+        statusLine = `🟡 ลงแล้ว <b>${recordedQ.toLocaleString()} ชิ้น</b> • เหลืออีก <b>${remainQ.toLocaleString()} ชิ้น</b>`;
         barColor = '#f59e0b';
-        actionBtnLabel = `เหลือ ${remainQ} ▾`;
+        actionBtnLabel = `+ เพิ่มหมวด (เหลือ ${remainQ}) ▾`;
       } else if (recordedQ === targetQ) {
         stateCls = 'st-done';
-        statusLine = `<span style="color:#15803d;">✅ ลงครบแล้ว (${recordedQ} ชิ้น)</span>`;
+        statusLine = `✅ ลงครบแล้วทั้ง <b>${recordedQ.toLocaleString()} ชิ้น</b>`;
         barColor = '#22c55e';
         actionBtnLabel = 'ครบแล้ว ✓';
         if (targetQ > 0) completedRatesCount++;
       } else {
         stateCls = 'st-over';
-        statusLine = `<span style="color:#dc2626;">🔴 เกินไป <b>${Math.abs(remainQ)}</b> ชิ้น! (${recordedQ}/${targetQ})</span>`;
+        statusLine = `🔴 ลงเกินไป <b>${Math.abs(remainQ).toLocaleString()} ชิ้น!</b> (ลงไป ${recordedQ}/${targetQ} ชิ้น)`;
         barColor = '#ef4444';
         actionBtnLabel = 'เกิน! ▾';
       }
@@ -1318,18 +1425,19 @@
         const defaultInputQty = remainQ > 0 ? remainQ : 1;
 
         const entriesHtml = entries.map((ent, eIdx) => {
-          let bcPart = `<span style="color:var(--text-muted);">ไม่ได้ระบุเลขพัสดุ</span>`;
+          const batchAmt = ent.qty * r.price;
+          let bcPart = `<span style="color:var(--text-muted);">(ไม่ระบุเลขพัสดุ)</span>`;
           if (ent.start8 && String(ent.start8).length === 8) {
             const sNum = parseInt(ent.start8, 10);
             const eNum = sNum + ent.qty - 1;
             const sObj = formatThaiBarcode(ent.prefix || 'RJ', sNum, 'TH');
             const eObj = formatThaiBarcode(ent.prefix || 'RJ', eNum, 'TH');
             bcPart = `
-              <div style="display:inline-flex; align-items:center; gap:4px; flex-wrap:wrap;">
+              <div style="display:inline-flex; align-items:center; gap:4px; flex-wrap:wrap; margin-top:2px;">
                 <button class="copy-bc-pill" onclick="copyText('${sObj.compact}')">
                   ${sObj.prefix} ${sObj.str8.slice(0,4)} ${sObj.str8.slice(4,8)} <span class="cd-red">${sObj.cd}</span> TH 📋
                 </button>
-                <span>–</span>
+                <span>ถึง</span>
                 <button class="copy-bc-pill" onclick="copyText('${eObj.compact}')">
                   ${eObj.prefix} ${eObj.str8.slice(0,4)} ${eObj.str8.slice(4,8)} <span class="cd-red">${eObj.cd}</span> TH 📋
                 </button>
@@ -1339,65 +1447,79 @@
           return `
             <div class="rec-item">
               <div>
-                <b>#${eIdx + 1} (${ent.qty} ชิ้น):</b> ${bcPart}
+                <div><b>ชุดที่ ${eIdx + 1}: หมวด ${ent.prefix || '-'} • จำนวน ${ent.qty} ชิ้น = ${batchAmt.toLocaleString()} ฿</b></div>
+                ${bcPart}
               </div>
-              <button class="btn-sm" style="padding:2px 6px; font-size:11px;" onclick="removeRateEntry(${idx}, ${eIdx})">✕</button>
+              <button class="btn-sm" style="padding:3px 7px; font-size:11px;" onclick="removeRateEntry(${idx}, ${eIdx})">🗑️ ลบ</button>
             </div>
           `;
         }).join('');
 
+        // Show form to add first batch OR add new prefix batch when remaining > 0
+        let addFormHtml = '';
+        if (remainQ > 0) {
+          const formHeading = entries.length === 0
+            ? `➕ บันทึกการลงข้อมูล (ต้องลง ${remainQ} ชิ้น)`
+            : `➕ เพิ่มหมวดเลขใหม่ / ลงส่วนที่เหลืออีก ${remainQ} ชิ้น (ชุดที่ ${entries.length + 1})`;
+
+          addFormHtml = `
+            <div class="add-batch-panel">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+                <span style="font-size:12.5px; font-weight:800; color:#1e40af;">${formHeading}</span>
+                <button class="btn-sm success" style="padding:3px 8px; font-size:11.5px;" onclick="quickMarkComplete(${idx}, ${remainQ})">
+                  ✅ กดลงครบ ${remainQ} ชิ้นที่เหลือทันที
+                </button>
+              </div>
+
+              <div class="drawer-form">
+                <div>
+                  <label>จำนวน (ไม่เกิน ${remainQ})</label>
+                  <input type="number" id="entryQty_${idx}" inputmode="numeric" min="1" max="${remainQ}" value="${defaultInputQty}"
+                    oninput="onDraftQtyInput(${idx}, this, ${remainQ})">
+                </div>
+                <div>
+                  <label>หมวด</label>
+                  <input type="text" id="entryPrefix_${idx}" maxlength="2" style="text-transform:uppercase; text-align:center;"
+                    value="${r.draftPrefix || 'RJ'}"
+                    oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2); state.selectedRates[${idx}].draftPrefix = this.value; updateLiveBcPreview(${idx}); saveState();">
+                </div>
+                <div>
+                  <label>เลขต้น 8 หลัก (<span id="digitCount_${idx}">${(r.draftStart8 || '').length}</span>/8)</label>
+                  <input type="text" id="entryStart8_${idx}" inputmode="numeric" maxlength="8" placeholder="กรอก 8 หลัก"
+                    value="${r.draftStart8 || ''}"
+                    oninput="onDraftStartInput(${idx}, this)">
+                </div>
+              </div>
+
+              <div id="liveBcPreview_${idx}" style="margin-bottom: 8px; font-size: 12.5px;"></div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div style="display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
+                  <span style="font-size:11px; color:var(--text-muted);">เลือกหมวด:</span>
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RJ')">RJ</button>
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RB')">RB</button>
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RC')">RC</button>
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'ED')">ED</button>
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'EJ')">EJ</button>
+                </div>
+                <button class="btn-sm primary" onclick="addRateEntry(${idx})">
+                  💾 บันทึกชุดนี้
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          addFormHtml = `
+            <div style="text-align:center; padding:6px; background:#dcfce7; color:#166534; border-radius:8px; font-size:12.5px; font-weight:700;">
+              🎉 เรท ${r.price}฿ ลงครบตามจำนวน ${targetQ} ชิ้นแล้ว (หากต้องการแก้ไข กดลบชุดด้านบนได้ครับ)
+            </div>
+          `;
+        }
+
         drawerHtml = `
           <div class="s-drawer" onclick="event.stopPropagation()">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
-              <span style="font-size:12px; font-weight:800; color:#1e3a8a;">
-                บันทึกยอดคีย์เข้าเครื่อง (เรท ${r.price}฿)
-              </span>
-              <div style="display:flex; gap:4px;">
-                ${isLocked
-                  ? `<button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="updateRateFixedQty(${idx}, '')">🔓 ปลดล็อกจำนวนเรท</button>`
-                  : ''
-                }
-                ${remainQ > 0
-                  ? `<button class="btn-sm success" style="padding:2px 8px; font-size:11px;" onclick="quickMarkComplete(${idx}, ${remainQ})">✅ กดลงครบ ${remainQ} ชิ้นทันที</button>`
-                  : ''
-                }
-              </div>
-            </div>
-
-            <div class="drawer-form">
-              <div>
-                <label>จำนวน (ไม่เกิน ${Math.max(1, remainQ)})</label>
-                <input type="number" id="entryQty_${idx}" inputmode="numeric" min="1" max="${Math.max(1, remainQ)}" value="${defaultInputQty}"
-                  oninput="onDraftQtyInput(${idx}, this, ${Math.max(1, remainQ)})">
-              </div>
-              <div>
-                <label>หมวด</label>
-                <input type="text" id="entryPrefix_${idx}" maxlength="2" style="text-transform:uppercase; text-align:center;"
-                  value="${r.draftPrefix || 'RJ'}"
-                  oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2); state.selectedRates[${idx}].draftPrefix = this.value; updateLiveBcPreview(${idx}); saveState();">
-              </div>
-              <div>
-                <label>เลขต้น 8 หลัก (<span id="digitCount_${idx}">${(r.draftStart8 || '').length}</span>/8)</label>
-                <input type="text" id="entryStart8_${idx}" inputmode="numeric" maxlength="8" placeholder="กรอก 8 หลัก"
-                  value="${r.draftStart8 || ''}"
-                  oninput="onDraftStartInput(${idx}, this)">
-              </div>
-            </div>
-            <div id="liveBcPreview_${idx}" style="margin-bottom: 8px; font-size: 12.5px;"></div>
-
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
-              <div style="display:flex; gap:4px;">
-                <button class="btn-sm" style="padding:2px 6px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RJ')">RJ</button>
-                <button class="btn-sm" style="padding:2px 6px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RB')">RB</button>
-                <button class="btn-sm" style="padding:2px 6px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'ED')">ED</button>
-                <button class="btn-sm" style="padding:2px 6px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'EJ')">EJ</button>
-              </div>
-              <button class="btn-sm primary" onclick="addRateEntry(${idx})">
-                + บันทึก (${r.price}฿)
-              </button>
-            </div>
-
             ${entries.length > 0 ? `<div class="recorded-chip-list">${entriesHtml}</div>` : ''}
+            ${addFormHtml}
           </div>
         `;
       }
@@ -1409,13 +1531,13 @@
               <div class="s-rate-group">
                 <span class="s-price-box">เรท ${r.price} ฿</span>
                 ${r.isAR ? '<span class="badge-ar" style="font-size:11px; padding:1px 6px;">AR ตอบรับ</span>' : ''}
-                ${isLocked ? '<span style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; padding:1px 6px; border-radius:4px;">🔒 ล็อก</span>' : ''}
+                ${isLocked ? `<span style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; padding:1px 6px; border-radius:4px;" onclick="event.stopPropagation(); updateRateFixedQty(${idx}, '')">🔒 ล็อก (แตะปลด)</span>` : ''}
               </div>
               <div class="s-amount-text">เป็นเงิน ${subAmt.toLocaleString()} ฿</div>
             </div>
 
             <div class="s-line-bottom">
-              <div class="s-status-text">${statusLine}</div>
+              <div class="s-status-pill">${statusLine}</div>
               <div class="s-right" onclick="event.stopPropagation()">
                 <div class="qty-stepper" title="ปรับจำนวนชิ้นของเรทนี้">
                   <button onclick="stepRateQty(${idx}, ${targetQ}, -1)">−</button>
@@ -1437,7 +1559,7 @@
       `;
     }).join('');
 
-    // Render Compact Top Summary Banner
+    // Render Top Summary Banner
     const overallRemain = Math.max(0, sumSolvedQty - grandRecordedQty);
     const isExactMatch = currentSolutions.length > 0 && sumSolvedQty === totalQty && sumSolvedAmt === totalAmount;
 
@@ -1492,6 +1614,86 @@
         </div>
       `).join('');
     }
+
+    renderPosVerificationLog();
+  }
+
+  /**
+   * ส่วนที่ 3 (ด้านล่างสุด ซ่อน/เปิดได้): แสดงรายการบันทึกเรียงตามลำดับการคีย์ (บรรทัดที่ 1, 2, 3...)
+   * เพื่อใช้ตรวจสอบเทียบกับหน้าจอรับฝาก (POS)
+   */
+  function renderPosVerificationLog() {
+    const allLogs = [];
+    state.selectedRates.forEach((r, rIdx) => {
+      (r.entries || []).forEach((ent, eIdx) => {
+        allLogs.push({
+          rateIdx: rIdx,
+          entryIdx: eIdx,
+          price: r.price,
+          isAR: r.isAR,
+          qty: ent.qty,
+          subtotal: ent.qty * r.price,
+          prefix: ent.prefix || 'RJ',
+          start8: ent.start8 || '',
+          timestamp: ent.timestamp || 0
+        });
+      });
+    });
+
+    // เรียงตามลำดับเวลาที่กดบันทึกจริง (บรรทัดที่ 1, 2, 3... บนหน้าจอรับฝาก)
+    allLogs.sort((a, b) => a.timestamp - b.timestamp);
+
+    const titleEl = document.getElementById('posLogToggleTitle');
+    const arrowEl = document.getElementById('posLogToggleArrow');
+    const containerEl = document.getElementById('posLogContainer');
+    const listEl = document.getElementById('posLogList');
+
+    const totalLoggedQty = allLogs.reduce((acc, item) => acc + item.qty, 0);
+    const totalLoggedAmt = allLogs.reduce((acc, item) => acc + item.subtotal, 0);
+
+    titleEl.textContent = `🖥️ ตรวจสอบกับหน้าจอรับฝาก (${allLogs.length} บรรทัด | ${totalLoggedQty} ชิ้น = ${totalLoggedAmt.toLocaleString()}฿)`;
+    arrowEl.textContent = state.showPosLog ? 'ซ่อน ▴' : 'กดดู ▾';
+    containerEl.style.display = state.showPosLog ? 'block' : 'none';
+
+    if (allLogs.length === 0) {
+      listEl.innerHTML = `<div style="text-align:center; padding:12px; color:var(--text-muted); font-size:13px;">ยังไม่มีรายการที่กดบันทึก (เมื่อคุณกด "+ บันทึกชุดนี้" ในแต่ละเรท รายการจะมาเรียงบรรทัดที่ 1, 2, 3... ที่นี่เพื่อเทียบกับหน้าจอรับฝาก)</div>`;
+      return;
+    }
+
+    listEl.innerHTML = allLogs.map((item, idx) => {
+      let bcText = `หมวด ${item.prefix} (ไม่ระบุเลข 8 หลัก)`;
+      if (item.start8 && item.start8.length === 8) {
+        const sNum = parseInt(item.start8, 10);
+        const eNum = sNum + item.qty - 1;
+        const sObj = formatThaiBarcode(item.prefix, sNum, 'TH');
+        const eObj = formatThaiBarcode(item.prefix, eNum, 'TH');
+        bcText = `${sObj.spaced} ถึง ${eObj.spaced}`;
+      }
+
+      return `
+        <div class="pos-line-item">
+          <div class="pos-line-main">
+            <span>บรรทัดที่ ${idx + 1}: เรท ${item.price} ฿ ${item.isAR ? '<span class="badge-ar">AR</span>' : ''} × <span style="color:var(--secondary);">${item.qty} ชิ้น</span></span>
+            <span style="color:var(--primary-dark);">รวม ${item.subtotal.toLocaleString()} บาท</span>
+          </div>
+          <div class="pos-line-sub">
+            <span style="font-family:monospace; font-weight:700; color:#334155;">${bcText}</span>
+            <button class="btn-sm" style="padding:2px 6px; font-size:11px;" onclick="removeRateEntry(${item.rateIdx}, ${item.entryIdx})">ลบ</button>
+          </div>
+        </div>
+      `;
+    }).join('') + `
+      <div style="background:#0f172a; color:white; padding:10px 12px; border-radius:9px; display:flex; justify-content:space-between; font-weight:800; font-size:14px;">
+        <span>รวมที่คีย์แล้วทั้งหมด (${allLogs.length} บรรทัด)</span>
+        <span>${totalLoggedQty.toLocaleString()} ชิ้น = ${totalLoggedAmt.toLocaleString()} บาท</span>
+      </div>
+    `;
+  }
+
+  function togglePosLogSection() {
+    state.showPosLog = !state.showPosLog;
+    saveState();
+    renderPosVerificationLog();
   }
 
   function buildDiagnostics(totalQty, totalAmount, selectedRates) {
@@ -1626,9 +1828,18 @@
 
   function setDraftPrefix(idx, prefix) {
     if (!state.selectedRates[idx]) return;
+    const prevPrefix = state.selectedRates[idx].draftPrefix;
     state.selectedRates[idx].draftPrefix = prefix;
     const pEl = document.getElementById('entryPrefix_' + idx);
     if (pEl) pEl.value = prefix;
+    // If user switches to a different prefix (e.g. from RB to RJ), clear the auto-advanced number so they can type the new prefix's starting 8 digits
+    if (prevPrefix !== prefix) {
+      state.selectedRates[idx].draftStart8 = '';
+      const sEl = document.getElementById('entryStart8_' + idx);
+      if (sEl) sEl.value = '';
+      const cntEl = document.getElementById('digitCount_' + idx);
+      if (cntEl) cntEl.textContent = '0';
+    }
     updateLiveBcPreview(idx);
     saveState();
   }
@@ -1650,7 +1861,6 @@
     state.selectedRates[idx].draftPrefix = parsed.prefix;
     state.selectedRates[idx].draftStart8 = parsed.start8;
 
-    // Strictly lock input box to 8 digits max!
     inputEl.value = parsed.start8;
 
     const pEl = document.getElementById('entryPrefix_' + idx);
@@ -1722,7 +1932,8 @@
     r.entries.push({
       qty,
       prefix,
-      start8: clean8.length === 8 ? clean8 : ''
+      start8: clean8.length === 8 ? clean8 : '',
+      timestamp: Date.now()
     });
 
     if (clean8.length === 8) {
@@ -1733,7 +1944,7 @@
     }
 
     updateAll();
-    showToast(`บันทึกเรท ${r.price}฿ จำนวน ${qty} ชิ้นแล้ว`);
+    showToast(`บันทึกเรท ${r.price}฿ จำนวน ${qty} ชิ้น (${(qty * r.price).toLocaleString()}฿) แล้ว`);
   }
 
   function quickMarkComplete(idx, remainQty) {
@@ -1748,7 +1959,8 @@
     r.entries.push({
       qty: remainQty,
       prefix,
-      start8: clean8.length === 8 ? clean8 : ''
+      start8: clean8.length === 8 ? clean8 : '',
+      timestamp: Date.now()
     });
     r.draftStart8 = '';
     r.expanded = false;
@@ -1898,9 +2110,9 @@
             const eNum = sNum + ent.qty - 1;
             const sObj = formatThaiBarcode(ent.prefix || 'RJ', sNum, 'TH');
             const eObj = formatThaiBarcode(ent.prefix || 'RJ', eNum, 'TH');
-            lines.push(`   - รอบที่ ${eIdx + 1}: ${ent.qty} ชิ้น | ${sObj.compact} ถึง ${eObj.compact}`);
+            lines.push(`   - ชุดที่ ${eIdx + 1}: ${ent.qty} ชิ้น (${(ent.qty * r.price).toLocaleString()}฿) | ${sObj.compact} ถึง ${eObj.compact}`);
           } else {
-            lines.push(`   - รอบที่ ${eIdx + 1}: ${ent.qty} ชิ้น`);
+            lines.push(`   - ชุดที่ ${eIdx + 1}: ${ent.qty} ชิ้น (${(ent.qty * r.price).toLocaleString()}฿)`);
           }
         });
       }
