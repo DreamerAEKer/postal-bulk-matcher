@@ -794,8 +794,12 @@
     </div>
 
     <!-- เลือกบริการหลัก -->
-    <div style="font-size: 12.5px; font-weight: 700; color: #475569; margin-bottom: 6px;">
-      1.1 เลือกบริการหลัก:
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
+      <span style="font-size: 12.5px; font-weight: 700; color: #475569;">1.1 เลือกบริการหลัก:</span>
+      <label id="fuelChargeToggleWrap" style="display: none; font-size: 12px; font-weight: 800; background: #fff7ed; color: #c2410c; border: 1.5px solid #fdba74; padding: 3px 9px; border-radius: 99px; cursor: pointer; align-items: center; gap: 5px;">
+        <input type="checkbox" id="fuelChargeCheckbox" checked onchange="toggleFuelCharge()">
+        <span>⛽ รวมค่า Fuel Charge (+3฿/ชิ้น)</span>
+      </label>
     </div>
     <div class="service-tabs">
       <button class="srv-tab active" id="tab_reg_doc" onclick="switchServiceTab('reg_doc')">
@@ -807,8 +811,8 @@
       <button class="srv-tab" id="tab_ems" onclick="switchServiceTab('ems')">
         ⚡ EMS ในประเทศ
       </button>
-      <button class="srv-tab" id="tab_inter" onclick="switchServiceTab('inter')">
-        ✈️ พัสดุ / ตปท.
+      <button class="srv-tab" id="tab_ecopost" onclick="switchServiceTab('ecopost')">
+        📦 eCo-Post
       </button>
     </div>
 
@@ -967,32 +971,33 @@
       { id: 'n68', price: 68, label: 'ซอง ≤2kg (55+13)', isAR: false }
     ],
     ems: [
-      { id: 'e32', price: 32, label: 'EMS ≤20g', isAR: false },
-      { id: 'e44_ar', price: 44, label: 'EMS 32 + AR 12฿', isAR: true, isTrack2: true },
-      { id: 'e37', price: 37, label: 'EMS ≤100g', isAR: false },
-      { id: 'e49_ar', price: 49, label: 'EMS 37 + AR 12฿', isAR: true, isTrack2: true },
-      { id: 'e42', price: 42, label: 'EMS ≤250g', isAR: false },
-      { id: 'e54_ar', price: 54, label: 'EMS 42 + AR 12฿', isAR: true, isTrack2: true },
-      { id: 'e52', price: 52, label: 'EMS ≤500g', isAR: false },
-      { id: 'e64_ar', price: 64, label: 'EMS 52 + AR 12฿', isAR: true, isTrack2: true },
-      { id: 'e67', price: 67, label: 'EMS ≤1kg', isAR: false },
-      { id: 'e79_ar', price: 79, label: 'EMS 67 + AR 12฿', isAR: true, isTrack2: true },
-      { id: 'e82', price: 82, label: 'EMS ≤1.5kg', isAR: false },
-      { id: 'e94_ar', price: 94, label: 'EMS 82 + AR 12฿', isAR: true, isTrack2: true },
-      { id: 'e97', price: 97, label: 'EMS ≤2kg', isAR: false },
-      { id: 'e109_ar', price: 109, label: 'EMS 97 + AR 12฿', isAR: true, isTrack2: true },
-      { id: 'e112', price: 112, label: 'EMS ≤2.5kg', isAR: false },
-      { id: 'e127', price: 127, label: 'EMS ≤3kg', isAR: false }
+      { id: 'e32', basePrice: 32, price: 35, label: 'EMS ≤20g', isAR: false, hasFuel: true },
+      { id: 'e44_ar', basePrice: 44, price: 47, label: 'EMS ≤20g + AR 12฿', isAR: true, isTrack2: true, hasFuel: true },
+      { id: 'e37', basePrice: 37, price: 40, label: 'EMS ≤100g', isAR: false, hasFuel: true },
+      { id: 'e49_ar', basePrice: 49, price: 52, label: 'EMS ≤100g + AR 12฿', isAR: true, isTrack2: true, hasFuel: true },
+      { id: 'e42', basePrice: 42, price: 45, label: 'EMS ≤250g', isAR: false, hasFuel: true },
+      { id: 'e54_ar', basePrice: 54, price: 57, label: 'EMS ≤250g + AR 12฿', isAR: true, isTrack2: true, hasFuel: true },
+      { id: 'e52', basePrice: 52, price: 55, label: 'EMS ≤500g', isAR: false, hasFuel: true },
+      { id: 'e64_ar', basePrice: 64, price: 67, label: 'EMS ≤500g + AR 12฿', isAR: true, isTrack2: true, hasFuel: true },
+      { id: 'e67', basePrice: 67, price: 70, label: 'EMS ≤1kg', isAR: false, hasFuel: true },
+      { id: 'e79_ar', basePrice: 79, price: 82, label: 'EMS ≤1kg + AR 12฿', isAR: true, isTrack2: true, hasFuel: true },
+      { id: 'e82', basePrice: 82, price: 85, label: 'EMS ≤1.5kg', isAR: false, hasFuel: true },
+      { id: 'e94_ar', basePrice: 94, price: 97, label: 'EMS ≤1.5kg + AR 12฿', isAR: true, isTrack2: true, hasFuel: true },
+      { id: 'e97', basePrice: 97, price: 100, label: 'EMS ≤2kg', isAR: false, hasFuel: true },
+      { id: 'e109_ar', basePrice: 109, price: 112, label: 'EMS ≤2kg + AR 12฿', isAR: true, isTrack2: true, hasFuel: true },
+      { id: 'e112', basePrice: 112, price: 115, label: 'EMS ≤2.5kg', isAR: false, hasFuel: true },
+      { id: 'e127', basePrice: 127, price: 130, label: 'EMS ≤3kg', isAR: false, hasFuel: true }
     ],
-    inter: [
-      { id: 'p20', price: 20, label: 'พัสดุ ≤1kg', isAR: false },
-      { id: 'p35', price: 35, label: 'พัสดุ ≤2kg', isAR: false },
-      { id: 'p50', price: 50, label: 'พัสดุ ≤3kg', isAR: false },
-      { id: 'p65', price: 65, label: 'พัสดุ ≤4kg', isAR: false },
-      { id: 'ep120', price: 120, label: 'ePacket เอเชีย', isAR: false },
-      { id: 'ep150', price: 150, label: 'ePacket 150฿', isAR: false },
-      { id: 'ep240', price: 240, label: 'ePacket ยุโรป/เมกา', isAR: false },
-      { id: 'ra95', price: 95, label: 'ลงทะเบียน ตปท.', isAR: false }
+    ecopost: [
+      { id: 'eco20', basePrice: 20, price: 23, label: 'eCo-Post ≤20g', isAR: false, hasFuel: true },
+      { id: 'eco22', basePrice: 22, price: 25, label: 'eCo-Post ≤100g', isAR: false, hasFuel: true },
+      { id: 'eco26', basePrice: 26, price: 29, label: 'eCo-Post ≤250g', isAR: false, hasFuel: true },
+      { id: 'eco30', basePrice: 30, price: 33, label: 'eCo-Post ≤500g', isAR: false, hasFuel: true },
+      { id: 'eco40', basePrice: 40, price: 43, label: 'eCo-Post ≤1kg', isAR: false, hasFuel: true },
+      { id: 'eco60', basePrice: 60, price: 63, label: 'eCo-Post ≤2kg', isAR: false, hasFuel: true },
+      { id: 'eco80', basePrice: 80, price: 83, label: 'eCo-Post ≤4kg', isAR: false, hasFuel: true },
+      { id: 'eco120', basePrice: 120, price: 123, label: 'eCo-Post ≤6kg', isAR: false, hasFuel: true },
+      { id: 'eco160', basePrice: 160, price: 163, label: 'eCo-Post ≤10kg', isAR: false, hasFuel: true }
     ]
   };
 
@@ -1592,12 +1597,41 @@
 
   function switchServiceTab(tabKey) {
     state.currentPresetTab = tabKey;
-    ['reg_doc', 'reg_2568', 'ems', 'inter'].forEach(k => {
+    ['reg_doc', 'reg_2568', 'ems', 'ecopost'].forEach(k => {
       const btn = document.getElementById('tab_' + k);
       if (btn) btn.className = k === tabKey ? 'srv-tab active' : 'srv-tab';
     });
+    const fuelWrap = document.getElementById('fuelChargeToggleWrap');
+    if (fuelWrap) {
+      fuelWrap.style.display = (tabKey === 'ems' || tabKey === 'ecopost') ? 'inline-flex' : 'none';
+    }
     saveState();
-    renderPresetGrid();
+    renderMainSolver();
+  }
+
+  function toggleFuelCharge() {
+    const useFuel = document.getElementById('fuelChargeCheckbox').checked;
+    state.useFuelCharge = useFuel;
+    const surcharge = useFuel ? 3 : 0;
+
+    ['ems', 'ecopost'].forEach(grpKey => {
+      (PRESET_GROUPS[grpKey] || []).forEach(r => {
+        if (r.hasFuel && r.basePrice !== undefined) {
+          r.price = r.basePrice + surcharge;
+        }
+      });
+    });
+
+    state.selectedRates.forEach(r => {
+      const tpl = findCatalogRateById(r.id);
+      if (tpl && tpl.hasFuel && tpl.basePrice !== undefined) {
+        r.price = tpl.basePrice + surcharge;
+      }
+    });
+
+    state.selectedSolutionIndex = 0;
+    updateAll();
+    showToast(useFuel ? 'เปิดคิดค่า Fuel Charge (+3฿/ชิ้น) แล้ว' : 'ปิดค่า Fuel Charge (ใช้เรทฐานปกติ) แล้ว');
   }
 
   function findCatalogRateById(id) {
