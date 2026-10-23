@@ -1366,22 +1366,24 @@
 
             <div class="drawer-form">
               <div>
-                <label>จำนวนชิ้น</label>
-                <input type="number" id="entryQty_${idx}" inputmode="numeric" min="1" value="${defaultInputQty}">
+                <label>จำนวน (ไม่เกิน ${Math.max(1, remainQ)})</label>
+                <input type="number" id="entryQty_${idx}" inputmode="numeric" min="1" max="${Math.max(1, remainQ)}" value="${defaultInputQty}"
+                  oninput="onDraftQtyInput(${idx}, this, ${Math.max(1, remainQ)})">
               </div>
               <div>
                 <label>หมวด</label>
                 <input type="text" id="entryPrefix_${idx}" maxlength="2" style="text-transform:uppercase; text-align:center;"
                   value="${r.draftPrefix || 'RJ'}"
-                  oninput="state.selectedRates[${idx}].draftPrefix = this.value.toUpperCase(); saveState();">
+                  oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2); state.selectedRates[${idx}].draftPrefix = this.value; updateLiveBcPreview(${idx}); saveState();">
               </div>
               <div>
-                <label>เลขต้น 8 หลัก (เว้นว่างได้)</label>
-                <input type="text" id="entryStart8_${idx}" inputmode="numeric" placeholder="เช่น 38766349"
+                <label>เลขต้น 8 หลัก (<span id="digitCount_${idx}">${(r.draftStart8 || '').length}</span>/8)</label>
+                <input type="text" id="entryStart8_${idx}" inputmode="numeric" maxlength="8" placeholder="กรอก 8 หลัก"
                   value="${r.draftStart8 || ''}"
-                  oninput="onDraftStartInput(${idx}, this.value)">
+                  oninput="onDraftStartInput(${idx}, this)">
               </div>
             </div>
+            <div id="liveBcPreview_${idx}" style="margin-bottom: 8px; font-size: 12.5px;"></div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
               <div style="display:flex; gap:4px;">
@@ -1627,17 +1629,72 @@
     state.selectedRates[idx].draftPrefix = prefix;
     const pEl = document.getElementById('entryPrefix_' + idx);
     if (pEl) pEl.value = prefix;
+    updateLiveBcPreview(idx);
     saveState();
   }
 
-  function onDraftStartInput(idx, rawVal) {
+  function onDraftQtyInput(idx, inputEl, maxRemain) {
+    let val = parseInt(inputEl.value, 10);
+    if (val > maxRemain) {
+      val = maxRemain;
+      inputEl.value = maxRemain;
+      showToast(`ล็อกจำนวนสูงสุดตามที่เหลือ (${maxRemain} ชิ้น)`);
+    }
+    updateLiveBcPreview(idx);
+  }
+
+  function onDraftStartInput(idx, inputEl) {
     if (!state.selectedRates[idx]) return;
+    const rawVal = inputEl.value || '';
     const parsed = parseSmartBarcodeInput(rawVal, state.selectedRates[idx].draftPrefix || 'RJ');
     state.selectedRates[idx].draftPrefix = parsed.prefix;
     state.selectedRates[idx].draftStart8 = parsed.start8;
+
+    // Strictly lock input box to 8 digits max!
+    inputEl.value = parsed.start8;
+
     const pEl = document.getElementById('entryPrefix_' + idx);
     if (pEl) pEl.value = parsed.prefix;
+
+    const cntEl = document.getElementById('digitCount_' + idx);
+    if (cntEl) cntEl.textContent = parsed.start8.length;
+
+    updateLiveBcPreview(idx);
     saveState();
+  }
+
+  function updateLiveBcPreview(idx) {
+    const previewEl = document.getElementById('liveBcPreview_' + idx);
+    if (!previewEl || !state.selectedRates[idx]) return;
+
+    const qEl = document.getElementById('entryQty_' + idx);
+    const pEl = document.getElementById('entryPrefix_' + idx);
+    const sEl = document.getElementById('entryStart8_' + idx);
+
+    const qty = Math.max(1, parseInt(qEl ? qEl.value : 1, 10) || 1);
+    const prefix = (pEl ? pEl.value : state.selectedRates[idx].draftPrefix || 'RJ').toUpperCase();
+    const clean8 = String(sEl ? sEl.value : state.selectedRates[idx].draftStart8 || '').replace(/\D/g, '').slice(0, 8);
+
+    if (clean8.length === 8) {
+      const sNum = parseInt(clean8, 10);
+      const eNum = sNum + qty - 1;
+      const sObj = formatThaiBarcode(prefix, sNum, 'TH');
+      const eObj = formatThaiBarcode(prefix, eNum, 'TH');
+      previewEl.innerHTML = `
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:6px 9px; border-radius:7px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px;">
+          <span style="font-weight:700; color:#1e40af;">ตัวอย่าง (${qty} ชิ้น):</span>
+          <span style="font-family:monospace; font-weight:800; color:#0f172a;">
+            ${sObj.prefix} ${sObj.str8.slice(0,4)} ${sObj.str8.slice(4,8)} <span class="cd-red">${sObj.cd}</span> TH
+            ถึง
+            ${eObj.prefix} ${eObj.str8.slice(0,4)} ${eObj.str8.slice(4,8)} <span class="cd-red">${eObj.cd}</span> TH
+          </span>
+        </div>
+      `;
+    } else if (clean8.length > 0) {
+      previewEl.innerHTML = `<span style="color:#b45309; font-weight:600;">กำลังพิมพ์เลขต้น... (${clean8.length}/8 หลัก)</span>`;
+    } else {
+      previewEl.innerHTML = '';
+    }
   }
 
   function addRateEntry(idx) {
