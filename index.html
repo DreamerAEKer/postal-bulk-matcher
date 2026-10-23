@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>คำนวณเรทไปรษณีย์รวม & แจงเลขที่เฉพาะเรท</title>
+  <title>คำนวณเรทไปรษณีย์ & เช็กยอดการลงข้อมูลแต่ละเรท</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,9 +15,11 @@
       --secondary: #1d4ed8;
       --secondary-light: #eff6ff;
       --success: #15803d;
-      --success-light: #f0fdf4;
-      --warning: #b45309;
-      --warning-light: #fffbeb;
+      --success-bg: #dcfce7;
+      --warning: #d97706;
+      --warning-bg: #fef3c7;
+      --danger: #dc2626;
+      --danger-bg: #fee2e2;
       --bg: #f1f5f9;
       --card: #ffffff;
       --text: #0f172a;
@@ -44,13 +46,14 @@
     }
 
     body {
-      padding-bottom: 56px;
+      padding-bottom: 64px;
     }
 
+    /* Sticky Compact Mobile Header */
     header {
       background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
       color: white;
-      padding: 12px 14px;
+      padding: 11px 14px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       position: sticky;
       top: 0;
@@ -62,12 +65,6 @@
       max-width: 760px;
       margin: 0 auto;
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .header-top {
-      display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
@@ -76,83 +73,67 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       min-width: 0;
     }
 
     .brand-icon {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       flex-shrink: 0;
       background: white;
       color: var(--primary);
-      border-radius: 9px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 17px;
+      font-size: 16px;
     }
 
     .brand-title {
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 15.5px;
+      font-weight: 800;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .autosave-pill {
-      font-size: 11.5px;
-      background: rgba(255,255,255,0.16);
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 3px 9px;
-      border-radius: 99px;
-      white-space: nowrap;
-      display: inline-flex;
+    .header-right {
+      display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
+    .autosave-pill {
+      font-size: 11px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 3px 8px;
+      border-radius: 99px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     .dot-green {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       background: #4ade80;
       border-radius: 50%;
     }
 
-    .header-btns {
-      display: flex;
-      gap: 6px;
-      width: 100%;
-    }
-
-    .header-btns button {
-      flex: 1;
+    .btn-reset-top {
       font-family: inherit;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 700;
-      padding: 7px 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
-
-    .btn-header-white {
-      background: white;
-      color: var(--primary-dark);
-    }
-
-    .btn-header-outline {
-      background: rgba(0,0,0,0.2);
+      padding: 5px 10px;
+      border-radius: 7px;
+      background: rgba(0,0,0,0.22);
       color: white;
-      border: 1px solid rgba(255,255,255,0.4) !important;
-      flex: 0 0 auto !important;
+      border: 1px solid rgba(255,255,255,0.4);
+      cursor: pointer;
     }
 
     .main-wrap {
@@ -210,11 +191,12 @@
       justify-content: center;
     }
 
+    /* STEP 1 INPUTS */
     .top-inputs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .stat-input-card {
@@ -308,7 +290,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     @media (min-width: 500px) {
@@ -326,7 +308,6 @@
       cursor: pointer;
       user-select: none;
       transition: all 0.1s;
-      position: relative;
     }
 
     .rate-btn.active {
@@ -380,7 +361,6 @@
     }
 
     .custom-rate-box {
-      margin-top: 8px;
       padding: 9px 10px;
       background: #f8fafc;
       border: 1px dashed #cbd5e1;
@@ -422,108 +402,118 @@
       border-color: var(--secondary);
     }
 
-    .btn-sm.amber {
-      background: #fef3c7;
-      color: #92400e;
-      border-color: #f59e0b;
+    .btn-sm.success {
+      background: var(--success);
+      color: white;
+      border-color: var(--success);
     }
 
     /* ===================================================================== */
-    /* STEP 2: SORTED RATE SUMMARY & SELECTABLE SPECIFIC BARCODE ASSIGNMENT  */
+    /* STEP 2: INTERACTIVE RATE SUMMARY + PROGRESS TRACKING COMMUNICATION     */
     /* ===================================================================== */
-    .status-bar {
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
+    .overall-progress-card {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px;
       margin-bottom: 12px;
     }
 
-    .status-bar.ok {
-      background: var(--success-light);
-      border: 1.5px solid #86efac;
-      color: var(--success);
-    }
-
-    .status-bar.warn {
-      background: var(--warning-light);
-      border: 1.5px solid #fdba74;
-      color: var(--warning);
-    }
-
-    .quick-select-bar {
+    .op-top {
       display: flex;
+      justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
       gap: 6px;
-      align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    .rate-summary-list {
+    .op-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .op-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #16a34a);
+      transition: width 0.25s ease;
+    }
+
+    .op-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .op-stat-pill {
+      padding: 6px 4px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Rate Summary Cards with 4 Visual States */
+    .rate-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    .rate-summary-card {
+    .rate-card {
       border: 2px solid #cbd5e1;
       border-radius: 12px;
-      background: #ffffff;
+      background: white;
       overflow: hidden;
-      transition: all 0.12s;
+      transition: all 0.15s;
     }
 
-    .rate-summary-card.checked-for-barcode {
-      border-color: var(--secondary);
-      box-shadow: 0 2px 8px rgba(29, 78, 216, 0.12);
+    /* State 1: Partial (ลงไปบางส่วน ยังไม่ครบ) */
+    .rate-card.state-partial {
+      border-color: #f59e0b;
+      background: #fffdf5;
     }
 
-    .rate-summary-card.is-ar-card.checked-for-barcode {
-      border-color: #d97706;
-      box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15);
+    /* State 2: Complete (ลงครบจำนวนแล้ว!) */
+    .rate-card.state-complete {
+      border-color: #16a34a;
+      background: #f0fdf4;
     }
 
-    .rs-top {
-      padding: 10px 12px;
+    /* State 3: Over (ลงเกินจำนวน!) */
+    .rate-card.state-over {
+      border-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .rc-header {
+      padding: 11px 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .rc-row1 {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
       flex-wrap: wrap;
-      cursor: pointer;
-      background: #f8fafc;
     }
 
-    .rate-summary-card.checked-for-barcode .rs-top {
-      background: #eff6ff;
-    }
-
-    .rate-summary-card.is-ar-card.checked-for-barcode .rs-top {
-      background: #fffbeb;
-    }
-
-    .rs-left {
+    .rc-title-group {
       display: flex;
       align-items: center;
-      gap: 9px;
-      min-width: 135px;
+      gap: 7px;
     }
 
-    .rs-checkbox {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--secondary);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .rs-rate-title {
-      font-size: 16.5px;
+    .rc-price-badge {
+      font-size: 17px;
       font-weight: 800;
       color: #0f172a;
       display: flex;
@@ -531,39 +521,101 @@
       gap: 5px;
     }
 
-    .rs-rate-sub {
-      font-size: 11.5px;
-      color: var(--text-muted);
+    /* Status Pill on Each Rate Card */
+    .comm-badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 99px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .rs-center {
+    .comm-badge.none {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
+    .comm-badge.partial {
+      background: var(--warning-bg);
+      color: #b45309;
+      border: 1px solid #f59e0b;
+    }
+
+    .comm-badge.complete {
+      background: var(--success-bg);
+      color: #15803d;
+      border: 1px solid #22c55e;
+    }
+
+    .comm-badge.over {
+      background: var(--danger-bg);
+      color: #b91c1c;
+      border: 1px solid #ef4444;
+    }
+
+    .rc-row2 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .rc-progress-wrap {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .rc-progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .rc-bar-bg {
+      width: 100%;
+      height: 7px;
+      background: #e2e8f0;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .rc-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.2s;
+    }
+
+    .rc-target-controls {
       display: flex;
       align-items: center;
       gap: 5px;
     }
 
     .step-qty-btn {
-      width: 29px;
-      height: 29px;
-      border-radius: 7px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
       border: 1px solid #cbd5e1;
       background: white;
       font-weight: 800;
-      font-size: 16px;
+      font-size: 15px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .bd-qty-input {
-      width: 64px;
+      width: 58px;
       text-align: center;
       font-family: inherit;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
-      padding: 4px 5px;
-      border-radius: 7px;
+      padding: 3px 4px;
+      border-radius: 6px;
       border: 1.5px solid #94a3b8;
       background: white;
       color: var(--secondary);
@@ -575,64 +627,38 @@
       color: #b45309;
     }
 
-    .rs-right {
-      text-align: right;
-      min-width: 88px;
-    }
-
-    .rs-subtotal {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--primary-dark);
-    }
-
-    .rs-lock-tag {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    /* Specific Barcode Assignment Panel inside selected Rate Card */
-    .rs-barcode-panel {
-      padding: 10px 12px;
+    /* Expanded Drawer inside Rate Card (When user clicks a rate) */
+    .rc-drawer {
+      padding: 12px;
       border-top: 1.5px dashed #cbd5e1;
       background: #ffffff;
     }
 
-    .rs-bc-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 8px;
-      font-size: 12.5px;
-      font-weight: 700;
-      color: #1e40af;
-    }
-
-    .prefix-mini-chips {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-
-    .prefix-mini-btn {
-      font-size: 11px;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 5px;
-      border: 1px solid #cbd5e1;
+    .add-entry-box {
       background: #f8fafc;
-      cursor: pointer;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
     }
 
-    .rs-bc-input-row {
+    .entry-form-grid {
       display: grid;
-      grid-template-columns: 62px 1fr auto;
+      grid-template-columns: 82px 58px 1fr;
       gap: 6px;
-      align-items: center;
+      align-items: end;
+      margin-bottom: 8px;
     }
 
-    .rs-bc-input-row input {
+    .entry-form-grid label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 2px;
+    }
+
+    .entry-form-grid input {
       width: 100%;
       font-family: 'Sarabun', monospace;
       font-size: 15px;
@@ -640,30 +666,37 @@
       padding: 6px 8px;
       border: 1.5px solid #94a3b8;
       border-radius: 7px;
+      background: white;
     }
 
-    .rs-bc-result {
-      margin-top: 8px;
-      padding: 8px 10px;
-      border-radius: 8px;
+    .entry-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .entry-item {
       background: #f0fdf4;
       border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 7px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
       gap: 6px;
+      flex-wrap: wrap;
+      font-size: 13px;
     }
 
     .copy-bc-pill {
       font-family: 'Consolas', 'Courier New', monospace;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 800;
       background: white;
       color: #0f172a;
       border: 1px solid #cbd5e1;
-      padding: 3px 8px;
-      border-radius: 6px;
+      padding: 2px 7px;
+      border-radius: 5px;
       cursor: pointer;
     }
 
@@ -671,15 +704,6 @@
       color: #dc2626;
       text-decoration: underline;
       font-weight: 800;
-    }
-
-    /* Group Shared Barcode Generator for Selected Rates */
-    .selected-group-runner {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #eff6ff;
-      border: 1.5px solid #93c5fd;
     }
 
     .sol-nav {
@@ -736,23 +760,16 @@
 
 <header>
   <div class="header-inner">
-    <div class="header-top">
-      <div class="brand">
-        <div class="brand-icon">ปณ</div>
-        <div class="brand-title">คำนวณเรทไปรษณีย์ & กำกับเลขที่เฉพาะเรท</div>
-      </div>
+    <div class="brand">
+      <div class="brand-icon">ปณ</div>
+      <div class="brand-title">คำนวณเรท & เช็กยอดการลงข้อมูล</div>
+    </div>
+    <div class="header-right">
       <div class="autosave-pill">
         <span class="dot-green"></span>
         <span id="autosaveText">บันทึกอัตโนมัติ</span>
       </div>
-    </div>
-    <div class="header-btns">
-      <button class="btn-header-white" onclick="loadCimbExample()">
-        📄 ตัวอย่าง 361 ชิ้น / 8,033฿
-      </button>
-      <button class="btn-header-outline" onclick="resetAll()">
-        🔄 เริ่มใหม่
-      </button>
+      <button class="btn-reset-top" onclick="resetAll()">🔄 เริ่มใหม่</button>
     </div>
   </div>
 </header>
@@ -760,7 +777,7 @@
 <div class="main-wrap">
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 1: กรอกจำนวนรวม + ราคารวม + จิ้มเลือกเรทที่มี                 -->
+  <!-- ส่วนที่ 1: กรอกจำนวนชิ้นรวม + ราคารวม + จิ้มเลือกเรทที่มี             -->
   <!-- ===================================================================== -->
   <div class="card">
     <div class="section-head">
@@ -777,7 +794,7 @@
       <div class="stat-input-card">
         <label for="targetTotalQty">📦 จำนวนชิ้นรวม (ชิ้น)</label>
         <input type="number" id="targetTotalQty" inputmode="numeric" min="1" value="361" oninput="onTargetInput()">
-        <div class="stat-sub">จำนวนฉบับ/ชิ้นทั้งหมด</div>
+        <div class="stat-sub">จำนวนฉบับ/ชิ้นตามใบนำส่ง</div>
       </div>
 
       <div class="stat-input-card amount-card">
@@ -835,43 +852,29 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 2: สรุปแยกออกมารันตามเรทราคา + กดเลือกเรทเพื่อใส่เลขที่กำกับเฉพาะ -->
+  <!-- ส่วนที่ 2: สรุปรันตามเรทราคา + คลิกเรทเพื่อลงจำนวนชิ้น/เลขที่ & เช็กยอดคงเหลือ -->
   <!-- ===================================================================== -->
   <div class="card">
     <div class="section-head">
       <div class="section-title">
         <span class="step-num">2</span>
-        <span>สรุปรันตามเรทราคา & กดเลือกเรทเพื่อใส่เลขที่กำกับเฉพาะ</span>
+        <span>สรุปรันตามเรทราคา (แตะที่เรทเพื่อบันทึกยอดที่ลงแล้ว/ดูยอดคงเหลือ)</span>
       </div>
-      <button class="btn-sm" onclick="copySummaryText()">📋 คัดลอกสรุป</button>
+      <div style="display: flex; gap: 5px;">
+        <button class="btn-sm" onclick="clearAllRecordedEntries()" title="ล้างยอดที่บันทึกว่าลงแล้วทั้งหมด">🧹 ล้างยอดที่ลง</button>
+        <button class="btn-sm" onclick="copySummaryText()">📋 คัดลอก</button>
+      </div>
     </div>
 
-    <!-- แถบสถานะผลรวม -->
-    <div id="statusBar" class="status-bar ok"></div>
+    <!-- กล่องสื่อสารความคืบหน้าภาพรวม (ลงไปแล้วกี่ชิ้น เหลืออีกกี่ชิ้น เรทไหนครบแล้ว) -->
+    <div id="overallProgressBox" class="overall-progress-card"></div>
 
-    <!-- ปุ่มด่วนสำหรับกดเลือกเรทที่จะใส่เลขที่กำกับ -->
-    <div class="quick-select-bar">
-      <span style="font-size: 12.5px; font-weight: 700; color: #475569;">กดเลือกเรทเพื่อใส่เลขที่:</span>
-      <button class="btn-sm amber" onclick="selectRatesForBarcode('ar')">
-        🟡 เลือกเฉพาะเรทที่มีตอบรับ (AR)
-      </button>
-      <button class="btn-sm" onclick="selectRatesForBarcode('all')">
-        ☑️ เลือกทุกเรท
-      </button>
-      <button class="btn-sm" onclick="selectRatesForBarcode('none')">
-        ⬜ ปิดช่องเลขที่
-      </button>
-    </div>
-
-    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
-      👇 <b>รายการสรุปเรียงตามเรทราคา (น้อย ➔ มาก):</b> แตะติ๊กถูก <b>☑️ หน้าเรทที่ต้องการ</b> (เช่น เรทที่มี AR) เพื่อเปิดช่องใส่ <b>เลขที่พัสดุกำกับเฉพาะเรทนั้น</b> ได้เลย
+    <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">
+      👇 <b>วิธีใช้งาน:</b> แตะที่ <b>การ์ดเรทราคา</b> ด้านล่างเพื่อเปิดบันทึกว่าเรทนั้นคุณคีย์ลงเครื่องไปแล้วกี่ชิ้น (และใส่เลขที่กำกับได้ตามต้องการ) ระบบจะแสดงสถานะ <b>⚪ ยังไม่ลง / 🟡 เหลืออีกกี่ชิ้น / ✅ ครบแล้ว</b> ให้เห็นชัดเจน
     </p>
 
-    <!-- รายการสรุปที่รันตามเรทราคา -->
-    <div id="rateSummaryList" class="rate-summary-list"></div>
-
-    <!-- กล่องรันเลขต่อเนื่องให้เฉพาะกลุ่มเรทที่ติ๊กเลือกไว้ (กรณีเลือกมากกว่า 1 เรท เช่น เลือก AR หลายเรท) -->
-    <div id="selectedGroupRunner" class="selected-group-runner" style="display: none;"></div>
+    <!-- รายการการ์ดสรุปรันตามเรทราคา -->
+    <div id="rateSummaryList" class="rate-list"></div>
 
     <!-- ปุ่มสลับรูปแบบคำตอบ กรณีมีหลายชุดที่รวมได้เท่ากับยอดจริง -->
     <div id="solutionNav" class="sol-nav" style="display: none;"></div>
@@ -882,7 +885,7 @@
 
 </div>
 
-<div id="toast" class="toast">คัดลอกเรียบร้อย</div>
+<div id="toast" class="toast">ดำเนินการเรียบร้อย</div>
 
 <script>
   // ============================================================================
@@ -987,9 +990,9 @@
   };
 
   // ============================================================================
-  // 3. STATE & AUTO-SAVE
+  // 3. STATE & AUTO-SAVE (ไม่มีข้อมูลเลขที่ค้างไว้ก่อนที่คุณจะกรอกเอง)
   // ============================================================================
-  const STORAGE_KEY = 'POSTAL_MOBILE_MATCHER_V4';
+  const STORAGE_KEY = 'POSTAL_MOBILE_MATCHER_V5';
 
   let state = {
     currentPresetTab: 'reg_doc',
@@ -997,16 +1000,15 @@
     targetTotalQty: 361,
     targetTotalAmount: 8033,
     customRates: [],
+    // entries: รายการที่ผู้ใช้กดบันทึกว่าลงข้อมูล/ใส่เลขที่ไปแล้วในแต่ละเรท (เริ่มต้นเป็น [] ว่างเปล่า)
     selectedRates: [
-      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: null, assignBc: false, bcPrefix: 'RB', bcStart8: '14304624' },
-      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, assignBc: true, bcPrefix: 'RJ', bcStart8: '38766349' },
-      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: null, assignBc: false, bcPrefix: 'RJ', bcStart8: '' },
-      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, assignBc: true, bcPrefix: 'RJ', bcStart8: '' },
-      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: null, assignBc: false, bcPrefix: 'RJ', bcStart8: '' },
-      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: null, assignBc: false, bcPrefix: 'RJ', bcStart8: '' }
+      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] }
     ],
-    groupRunnerPrefix: 'RJ',
-    groupRunnerStart8: '38766349',
     selectedSolutionIndex: 0
   };
 
@@ -1029,12 +1031,16 @@
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.selectedRates)) {
           state = Object.assign({}, state, parsed);
+          state.selectedRates.forEach(r => {
+            if (!Array.isArray(r.entries)) r.entries = [];
+            if (!r.draftPrefix) r.draftPrefix = 'RJ';
+            if (r.draftStart8 === undefined) r.draftStart8 = '';
+          });
         }
       }
     } catch (e) {}
   }
 
-  // Always keep selectedRates sorted by price ascending (รันตามเรทราคา)
   function sortSelectedRatesByPrice() {
     state.selectedRates.sort((a, b) => {
       if (a.price !== b.price) return a.price - b.price;
@@ -1181,9 +1187,10 @@
         state.selectedRates = foundCombo.rates.map(r => ({
           ...r,
           fixedQty: null,
-          assignBc: !!r.isAR,
-          bcPrefix: state.currentPresetTab === 'ems' ? 'ED' : 'RJ',
-          bcStart8: ''
+          expanded: false,
+          draftPrefix: state.currentPresetTab === 'ems' ? 'ED' : 'RJ',
+          draftStart8: '',
+          entries: []
         }));
         sortSelectedRatesByPrice();
         state.selectedSolutionIndex = 0;
@@ -1282,17 +1289,14 @@
     const activeSolution = currentSolutions[state.selectedSolutionIndex] || {};
     renderPresetGrid(activeSolution);
 
-    const statusBar = document.getElementById('statusBar');
+    const overallBox = document.getElementById('overallProgressBox');
     const summaryList = document.getElementById('rateSummaryList');
-    const groupRunner = document.getElementById('selectedGroupRunner');
     const solNav = document.getElementById('solutionNav');
     const diagArea = document.getElementById('diagnosticsArea');
 
     if (state.selectedRates.length === 0) {
-      statusBar.className = 'status-bar warn';
-      statusBar.innerHTML = `<span>👆 กรุณาจิ้มเลือกเรทราคาด้านบน หรือกด "✨ แจงเรทอัตโนมัติ"</span>`;
+      overallBox.innerHTML = `<div style="text-align:center; color: var(--warning); font-weight:700;">👆 กรุณาจิ้มเลือกเรทราคาด้านบน หรือกด "✨ แจงเรทอัตโนมัติ"</div>`;
       summaryList.innerHTML = '';
-      groupRunner.style.display = 'none';
       solNav.style.display = 'none';
       diagArea.innerHTML = '';
       return;
@@ -1300,167 +1304,228 @@
 
     let sumSolvedQty = 0;
     let sumSolvedAmt = 0;
-    let checkedRatesCount = 0;
-    let checkedRatesTotalQty = 0;
-    let checkedRatesTotalAmt = 0;
+    let grandRecordedQty = 0;
+    let completedRatesCount = 0;
 
-    // Render each rate row sorted by price (รันตามเรทราคา)
+    // Render each rate card sorted by price
     summaryList.innerHTML = state.selectedRates.map((r, idx) => {
       const isLocked = r.fixedQty !== null && r.fixedQty !== '' && !isNaN(r.fixedQty);
-      const q = activeSolution[r.id] !== undefined
+      const targetQ = activeSolution[r.id] !== undefined
         ? activeSolution[r.id]
         : (isLocked ? Number(r.fixedQty) : 0);
-      const sub = q * r.price;
+      const subAmt = targetQ * r.price;
 
-      sumSolvedQty += q;
-      sumSolvedAmt += sub;
+      sumSolvedQty += targetQ;
+      sumSolvedAmt += subAmt;
 
-      if (r.assignBc) {
-        checkedRatesCount++;
-        checkedRatesTotalQty += q;
-        checkedRatesTotalAmt += sub;
+      const entries = Array.isArray(r.entries) ? r.entries : [];
+      const recordedQ = entries.reduce((acc, e) => acc + (parseInt(e.qty, 10) || 0), 0);
+      grandRecordedQty += recordedQ;
+
+      const remainQ = targetQ - recordedQ;
+      const pct = targetQ > 0 ? Math.min(100, Math.round((recordedQ / targetQ) * 100)) : 0;
+
+      // Determine Visual Communication State (4 states)
+      let cardStateClass = '';
+      let badgeHtml = '';
+      let barColor = '#94a3b8';
+
+      if (recordedQ === 0) {
+        cardStateClass = '';
+        badgeHtml = `<span class="comm-badge none">⚪ ยังไม่ลงข้อมูล (เหลือ ${targetQ} ชิ้น)</span>`;
+        barColor = '#cbd5e1';
+      } else if (recordedQ < targetQ) {
+        cardStateClass = 'state-partial';
+        badgeHtml = `<span class="comm-badge partial">🟡 ลงแล้ว ${recordedQ} • เหลืออีก ${remainQ} ชิ้น</span>`;
+        barColor = '#f59e0b';
+      } else if (recordedQ === targetQ && targetQ > 0) {
+        cardStateClass = 'state-complete';
+        badgeHtml = `<span class="comm-badge complete">✅ ครบแล้ว! (${recordedQ}/${targetQ} ชิ้น)</span>`;
+        barColor = '#16a34a';
+        completedRatesCount++;
+      } else {
+        cardStateClass = 'state-over';
+        badgeHtml = `<span class="comm-badge over">🔴 ลงเกินไป ${Math.abs(remainQ)} ชิ้น! (${recordedQ}/${targetQ})</span>`;
+        barColor = '#dc2626';
       }
 
-      // Specific Barcode Panel if checked
-      let barcodePanelHtml = '';
-      if (r.assignBc) {
-        const clean8 = String(r.bcStart8 || '').replace(/\D/g, '');
-        let bcRangeResultHtml = '';
+      // Expanded drawer for recording batches / barcodes in this rate
+      let drawerHtml = '';
+      if (r.expanded) {
+        const defaultInputQty = remainQ > 0 ? remainQ : 1;
 
-        if (clean8.length === 8 && q > 0) {
-          const sNum = parseInt(clean8, 10);
-          const eNum = sNum + q - 1;
-          const sObj = formatThaiBarcode(r.bcPrefix || 'RJ', sNum, 'TH');
-          const eObj = formatThaiBarcode(r.bcPrefix || 'RJ', eNum, 'TH');
-
-          bcRangeResultHtml = `
-            <div class="rs-bc-result">
-              <div style="font-size: 12px; font-weight: 700; color: #166534;">
-                📌 เลขที่กำกับเรท ${r.price}฿${r.isAR ? ' (AR)' : ''} จำนวน ${q} ชิ้น:
-              </div>
-              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        const entriesHtml = entries.map((ent, eIdx) => {
+          let bcText = `<span style="color: var(--text-muted);">(ไม่ได้ระบุเลขที่)</span>`;
+          if (ent.start8 && String(ent.start8).length === 8) {
+            const sNum = parseInt(ent.start8, 10);
+            const eNum = sNum + ent.qty - 1;
+            const sObj = formatThaiBarcode(ent.prefix || 'RJ', sNum, 'TH');
+            const eObj = formatThaiBarcode(ent.prefix || 'RJ', eNum, 'TH');
+            bcText = `
+              <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
                 <button class="copy-bc-pill" onclick="copyText('${sObj.compact}')">
                   ${sObj.prefix} ${sObj.str8.slice(0,4)} ${sObj.str8.slice(4,8)} <span class="cd-red">${sObj.cd}</span> TH 📋
                 </button>
-                <span style="font-size: 12px; font-weight: 800;">ถึง</span>
+                <span style="font-size:11.5px; font-weight:700;">ถึง</span>
                 <button class="copy-bc-pill" onclick="copyText('${eObj.compact}')">
                   ${eObj.prefix} ${eObj.str8.slice(0,4)} ${eObj.str8.slice(4,8)} <span class="cd-red">${eObj.cd}</span> TH 📋
                 </button>
               </div>
+            `;
+          }
+          return `
+            <div class="entry-item">
+              <div>
+                <b>รอบที่ ${eIdx + 1}: ลงแล้ว ${ent.qty} ชิ้น</b> (${(ent.qty * r.price).toLocaleString()}฿)
+                <div style="margin-top: 3px;">${bcText}</div>
+              </div>
+              <button class="btn-sm" style="padding: 3px 7px;" onclick="removeRateEntry(${idx}, ${eIdx})">🗑️ ลบ</button>
             </div>
           `;
-        } else {
-          bcRangeResultHtml = `
-            <div style="margin-top: 6px; font-size: 12px; color: var(--warning);">
-              💡 กรอกเลขเริ่มต้น 8 หลักด้านบน ระบบจะคำนวณเลขจบ (${q} ชิ้น) พร้อม Check Digit กำกับเฉพาะเรทนี้ทันที
-            </div>
-          `;
-        }
+        }).join('');
 
-        barcodePanelHtml = `
-          <div class="rs-barcode-panel">
-            <div class="rs-bc-header">
-              <span>🏷️ ใส่เลขที่พัสดุกำกับเฉพาะเรท ${r.price}฿${r.isAR ? ' (บริการตอบรับ AR)' : ''}:</span>
-              <div class="prefix-mini-chips">
-                <button class="prefix-mini-btn" onclick="setRateBcPrefix(${idx}, 'RJ')">RJ</button>
-                <button class="prefix-mini-btn" onclick="setRateBcPrefix(${idx}, 'RB')">RB</button>
-                <button class="prefix-mini-btn" onclick="setRateBcPrefix(${idx}, 'ED')">ED</button>
-                <button class="prefix-mini-btn" onclick="setRateBcPrefix(${idx}, 'EJ')">EJ</button>
+        drawerHtml = `
+          <div class="rc-drawer" onclick="event.stopPropagation()">
+            <div class="add-entry-box">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+                <span style="font-size:13px; font-weight:800; color:#1e3a8a;">
+                  ➕ บันทึกยอดที่คีย์ลงในเรท ${r.price}฿${r.isAR ? ' (AR)' : ''}
+                </span>
+                ${remainQ > 0
+                  ? `<button class="btn-sm success" style="padding:3px 9px; font-size:11.5px;" onclick="quickMarkComplete(${idx}, ${remainQ})">✅ กดลงครบทั้ง ${remainQ} ชิ้นที่เหลือทันที</button>`
+                  : ''
+                }
+              </div>
+
+              <div class="entry-form-grid">
+                <div>
+                  <label>จำนวนที่ลง (ชิ้น)</label>
+                  <input type="number" id="entryQty_${idx}" inputmode="numeric" min="1" value="${defaultInputQty}">
+                </div>
+                <div>
+                  <label>หมวด</label>
+                  <input type="text" id="entryPrefix_${idx}" maxlength="2" style="text-transform:uppercase; text-align:center;"
+                    value="${r.draftPrefix || 'RJ'}"
+                    oninput="state.selectedRates[${idx}].draftPrefix = this.value.toUpperCase(); saveState();">
+                </div>
+                <div>
+                  <label>เลขต้น 8 หลัก (ถ้าต้องการใส่เลขกำกับ)</label>
+                  <input type="text" id="entryStart8_${idx}" inputmode="numeric" placeholder="เว้นว่างได้ หรือใส่ 8 หลัก"
+                    value="${r.draftStart8 || ''}"
+                    oninput="onDraftStartInput(${idx}, this.value)">
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div style="display:flex; gap:4px;">
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RJ')">RJ</button>
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RB')">RB</button>
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'ED')">ED</button>
+                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'EJ')">EJ</button>
+                </div>
+                <button class="btn-sm primary" onclick="addRateEntry(${idx})">
+                  💾 บันทึกยอดเข้าเรท ${r.price}฿
+                </button>
               </div>
             </div>
-            <div class="rs-bc-input-row">
-              <input type="text" maxlength="2" style="text-transform:uppercase; text-align:center;"
-                value="${r.bcPrefix || 'RJ'}"
-                oninput="updateRateBcField(${idx}, 'prefix', this.value)">
-              <input type="text" inputmode="numeric" placeholder="เลขเริ่มต้น 8 หลัก เช่น 38766349"
-                value="${r.bcStart8 || ''}"
-                oninput="updateRateBcField(${idx}, 'start8', this.value)">
-              <button class="btn-sm" onclick="updateRateBcField(${idx}, 'start8', '')">ล้าง</button>
-            </div>
-            ${bcRangeResultHtml}
+
+            ${entries.length > 0
+              ? `<div class="entry-list">${entriesHtml}</div>`
+              : `<div style="font-size:12px; color:var(--text-muted); text-align:center;">ยังไม่มีประวัติการลงข้อมูลในเรทนี้</div>`
+            }
           </div>
         `;
       }
 
       return `
-        <div class="rate-summary-card ${r.assignBc ? 'checked-for-barcode' : ''} ${r.isAR ? 'is-ar-card' : ''}">
-          <div class="rs-top" onclick="toggleRateBarcodeAssign(${idx}, event)">
-            <div class="rs-left">
-              <input type="checkbox" class="rs-checkbox" ${r.assignBc ? 'checked' : ''}
-                onclick="event.stopPropagation(); toggleRateBarcodeAssign(${idx}, event)">
-              <div>
-                <div class="rs-rate-title">
-                  <span>เรท ${r.price} บาท</span>
+        <div class="rate-card ${cardStateClass}">
+          <div class="rc-header" onclick="toggleExpandRate(${idx})">
+            <div class="rc-row1">
+              <div class="rc-title-group">
+                <span class="rc-price-badge">
+                  เรท ${r.price} บาท
                   ${r.isAR ? '<span class="badge-ar">AR ตอบรับ</span>' : ''}
-                </div>
-                <div class="rs-rate-sub">${r.label} (แตะเพื่อใส่เลขที่เฉพาะเรทนี้)</div>
+                </span>
+                <span style="font-size: 13.5px; font-weight: 800; color: var(--primary-dark);">
+                  (${targetQ} ชิ้น = ${subAmt.toLocaleString()}฿)
+                </span>
               </div>
+              ${badgeHtml}
             </div>
 
-            <div class="rs-center" onclick="event.stopPropagation()">
-              <button class="step-qty-btn" onclick="stepRateQty(${idx}, ${q}, -1)">−</button>
-              <input type="number" inputmode="numeric" min="0"
-                class="bd-qty-input ${isLocked ? 'is-locked' : ''}"
-                value="${q}"
-                oninput="updateRateFixedQty(${idx}, this.value)">
-              <button class="step-qty-btn" onclick="stepRateQty(${idx}, ${q}, 1)">+</button>
-              <span style="font-size: 13px; font-weight: 700;">ชิ้น</span>
-            </div>
+            <div class="rc-row2">
+              <div class="rc-progress-wrap">
+                <div class="rc-progress-text">
+                  <span style="color: #334155;">ลงแล้ว: <b>${recordedQ}</b> / ${targetQ} ชิ้น</span>
+                  <span style="color: ${remainQ > 0 ? '#b45309' : (remainQ === 0 ? '#15803d' : '#dc2626')};">
+                    ${remainQ > 0 ? `เหลืออีก ${remainQ} ชิ้น` : (remainQ === 0 ? 'ครบพอดี!' : `เกิน ${Math.abs(remainQ)} ชิ้น`)}
+                  </span>
+                </div>
+                <div class="rc-bar-bg">
+                  <div class="rc-bar-fill" style="width: ${pct}%; background: ${barColor};"></div>
+                </div>
+              </div>
 
-            <div class="rs-right" onclick="event.stopPropagation()">
-              <div class="rs-subtotal">= ${sub.toLocaleString()} ฿</div>
-              <div class="rs-lock-tag">
+              <div class="rc-target-controls" onclick="event.stopPropagation()">
+                <button class="step-qty-btn" onclick="stepRateQty(${idx}, ${targetQ}, -1)" title="ลดจำนวนเป้าหมาย">−</button>
+                <input type="number" inputmode="numeric" min="0"
+                  class="bd-qty-input ${isLocked ? 'is-locked' : ''}"
+                  value="${targetQ}"
+                  title="จำนวนชิ้นเป้าหมายของเรทนี้"
+                  oninput="updateRateFixedQty(${idx}, this.value)">
+                <button class="step-qty-btn" onclick="stepRateQty(${idx}, ${targetQ}, 1)" title="เพิ่มจำนวนเป้าหมาย">+</button>
                 ${isLocked
-                  ? `<span style="color:#b45309; font-weight:700; cursor:pointer;" onclick="updateRateFixedQty(${idx}, '')">🔒 ล็อก (กดปลด)</span>`
-                  : `<span>⚡ ออโต้</span>`
+                  ? `<button class="btn-sm" style="padding:3px 6px; font-size:11px;" onclick="updateRateFixedQty(${idx}, '')" title="ปลดล็อก">🔓</button>`
+                  : ''
                 }
               </div>
             </div>
+
+            <div style="font-size: 11.5px; color: var(--secondary); font-weight: 700; display: flex; justify-content: space-between;">
+              <span>${r.expanded ? '▲ แตะเพื่อพับเก็บ' : '▼ แตะที่เรทนี้เพื่อลงจำนวนชิ้นที่ใช้ไป / ใส่เลขที่กำกับ'}</span>
+              ${entries.length > 0 ? `<span>บันทึกไว้ ${entries.length} รอบ</span>` : ''}
+            </div>
           </div>
-          ${barcodePanelHtml}
+          ${drawerHtml}
         </div>
       `;
     }).join('');
 
-    // If user selected 1 or more rates for barcode assignment, show summary of selected rates + sequential auto-fill helper
-    if (checkedRatesCount > 0) {
-      groupRunner.style.display = 'block';
-      groupRunner.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
-          <span style="font-size: 13.5px; font-weight: 800; color: #1e3a8a;">
-            📌 สรุปเฉพาะเรทที่ติ๊กเลือก (${checkedRatesCount} เรท): รวม ${checkedRatesTotalQty.toLocaleString()} ชิ้น = ${checkedRatesTotalAmt.toLocaleString()} บาท
-          </span>
-        </div>
-        <div style="font-size: 12px; color: #1e40af; margin-bottom: 6px;">
-          ⚡ <b>ตัวช่วยรันเลขต่อเนื่องให้เฉพาะเรทที่ติ๊กเลือกไว้ (${checkedRatesTotalQty} ชิ้น):</b> ใส่เลขต้นด้านล่างแล้วกด "รันเลขให้เรทที่เลือก"
-        </div>
-        <div style="display: grid; grid-template-columns: 62px 1fr auto; gap: 6px; align-items: center;">
-          <input type="text" id="grpPrefixInput" maxlength="2" style="text-transform:uppercase; text-align:center; font-weight:700; padding:6px; border:1px solid #93c5fd; border-radius:7px;"
-            value="${state.groupRunnerPrefix || 'RJ'}"
-            oninput="state.groupRunnerPrefix = this.value.toUpperCase(); saveState();">
-          <input type="text" id="grpStart8Input" inputmode="numeric" placeholder="เลขต้น 8 หลัก เช่น 38766349"
-            style="font-family:monospace; font-size:14.5px; font-weight:700; padding:6px 8px; border:1px solid #93c5fd; border-radius:7px;"
-            value="${state.groupRunnerStart8 || ''}"
-            oninput="onGroupRunnerStartInput(this.value)">
-          <button class="btn-sm primary" onclick="applySequentialBarcodesToSelectedRates()">
-            ⚡ รันเลขให้เรทที่เลือก
-          </button>
-        </div>
-      `;
-    } else {
-      groupRunner.style.display = 'none';
-    }
-
+    // Render Overall Progress Communication Box
+    const overallRemain = Math.max(0, sumSolvedQty - grandRecordedQty);
+    const overallPct = sumSolvedQty > 0 ? Math.min(100, Math.round((grandRecordedQty / sumSolvedQty) * 100)) : 0;
     const isExactMatch = currentSolutions.length > 0 && sumSolvedQty === totalQty && sumSolvedAmt === totalAmount;
 
-    if (isExactMatch) {
-      statusBar.className = 'status-bar ok';
-      statusBar.innerHTML = `
-        <span>✅ ลงตัวพอดีตามยอดรวมจริง!</span>
-        <span>รวม ${sumSolvedQty.toLocaleString()} ชิ้น = ${sumSolvedAmt.toLocaleString()} บาท</span>
-      `;
-      diagArea.innerHTML = '';
+    overallBox.innerHTML = `
+      <div class="op-top">
+        <span style="font-size: 14px; font-weight: 800; color: ${isExactMatch ? 'var(--success)' : 'var(--warning)'};">
+          ${isExactMatch
+            ? `✅ คำนวณเรทลงตัวพอดี: ${sumSolvedQty.toLocaleString()} ชิ้น = ${sumSolvedAmt.toLocaleString()} บาท`
+            : `⚠️ ยอดรวมเรทปัจจุบัน: ${sumSolvedQty.toLocaleString()} ชิ้น = ${sumSolvedAmt.toLocaleString()} ฿ (เป้า ${totalQty} ชิ้น / ${totalAmount.toLocaleString()} ฿)`
+          }
+        </span>
+        <span style="font-size: 12.5px; font-weight: 800; color: var(--secondary);">
+          ความคืบหน้าการลงข้อมูล: ${overallPct}%
+        </span>
+      </div>
+      <div class="op-bar-bg">
+        <div class="op-bar-fill" style="width: ${overallPct}%;"></div>
+      </div>
+      <div class="op-stats-row">
+        <div class="op-stat-pill" style="background: #eff6ff; color: #1d4ed8;">
+          ลงไปแล้ว: ${grandRecordedQty.toLocaleString()} ชิ้น
+        </div>
+        <div class="op-stat-pill" style="background: #fffbeb; color: #b45309;">
+          คงเหลือ: ${overallRemain.toLocaleString()} ชิ้น
+        </div>
+        <div class="op-stat-pill" style="background: #f0fdf4; color: #15803d;">
+          เรทที่ครบแล้ว: ${completedRatesCount}/${state.selectedRates.length} เรท
+        </div>
+      </div>
+    `;
 
+    if (isExactMatch) {
+      diagArea.innerHTML = '';
       if (currentSolutions.length > 1) {
         solNav.style.display = 'flex';
         solNav.innerHTML = `
@@ -1476,13 +1541,7 @@
         solNav.style.display = 'none';
       }
     } else {
-      statusBar.className = 'status-bar warn';
-      statusBar.innerHTML = `
-        <span>⚠️ ยอดปัจจุบัน: ${sumSolvedQty.toLocaleString()} ชิ้น = ${sumSolvedAmt.toLocaleString()} ฿</span>
-        <span>(เป้าหมาย: ${totalQty.toLocaleString()} ชิ้น = ${totalAmount.toLocaleString()} ฿)</span>
-      `;
       solNav.style.display = 'none';
-
       const diags = buildDiagnostics(totalQty, totalAmount, state.selectedRates);
       diagArea.innerHTML = diags.map(d => `
         <div class="diag-box">
@@ -1543,7 +1602,7 @@
   }
 
   // ============================================================================
-  // 6. EVENT HANDLERS FOR RATE SELECTION & SPECIFIC BARCODE ASSIGNMENT
+  // 6. EVENT HANDLERS
   // ============================================================================
   function updateAll() {
     saveState();
@@ -1615,9 +1674,10 @@
         state.selectedRates.push({
           ...tpl,
           fixedQty: null,
-          assignBc: !!tpl.isAR,
-          bcPrefix: state.currentPresetTab === 'ems' ? 'ED' : 'RJ',
-          bcStart8: ''
+          expanded: false,
+          draftPrefix: state.currentPresetTab === 'ems' ? 'ED' : 'RJ',
+          draftStart8: '',
+          entries: []
         });
       }
     }
@@ -1626,81 +1686,103 @@
     updateAll();
   }
 
-  function toggleRateBarcodeAssign(idx, event) {
+  function toggleExpandRate(idx) {
     if (!state.selectedRates[idx]) return;
-    state.selectedRates[idx].assignBc = !state.selectedRates[idx].assignBc;
-    if (!state.selectedRates[idx].bcPrefix) {
-      state.selectedRates[idx].bcPrefix = state.currentPresetTab === 'ems' ? 'ED' : 'RJ';
-    }
+    state.selectedRates[idx].expanded = !state.selectedRates[idx].expanded;
     updateAll();
   }
 
-  function selectRatesForBarcode(mode) {
-    state.selectedRates.forEach(r => {
-      if (mode === 'ar') {
-        r.assignBc = !!r.isAR;
-      } else if (mode === 'all') {
-        r.assignBc = true;
-      } else {
-        r.assignBc = false;
-      }
-      if (!r.bcPrefix) r.bcPrefix = state.currentPresetTab === 'ems' ? 'ED' : 'RJ';
-    });
-    updateAll();
-    if (mode === 'ar') showToast('เลือกเฉพาะเรทที่มีบริการตอบรับ (AR) แล้ว');
-  }
-
-  function setRateBcPrefix(idx, prefix) {
+  function setDraftPrefix(idx, prefix) {
     if (!state.selectedRates[idx]) return;
-    state.selectedRates[idx].bcPrefix = prefix;
-    updateAll();
-  }
-
-  function updateRateBcField(idx, field, rawVal) {
-    if (!state.selectedRates[idx]) return;
-    if (field === 'prefix') {
-      state.selectedRates[idx].bcPrefix = String(rawVal).toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2);
-    } else if (field === 'start8') {
-      const parsed = parseSmartBarcodeInput(rawVal, state.selectedRates[idx].bcPrefix || 'RJ');
-      state.selectedRates[idx].bcPrefix = parsed.prefix;
-      state.selectedRates[idx].bcStart8 = parsed.start8;
-    }
+    state.selectedRates[idx].draftPrefix = prefix;
+    const pEl = document.getElementById('entryPrefix_' + idx);
+    if (pEl) pEl.value = prefix;
     saveState();
-    renderMainSolver();
   }
 
-  function onGroupRunnerStartInput(rawVal) {
-    const parsed = parseSmartBarcodeInput(rawVal, state.groupRunnerPrefix || 'RJ');
-    state.groupRunnerPrefix = parsed.prefix;
-    state.groupRunnerStart8 = parsed.start8;
-    const pEl = document.getElementById('grpPrefixInput');
+  function onDraftStartInput(idx, rawVal) {
+    if (!state.selectedRates[idx]) return;
+    const parsed = parseSmartBarcodeInput(rawVal, state.selectedRates[idx].draftPrefix || 'RJ');
+    state.selectedRates[idx].draftPrefix = parsed.prefix;
+    state.selectedRates[idx].draftStart8 = parsed.start8;
+    const pEl = document.getElementById('entryPrefix_' + idx);
     if (pEl) pEl.value = parsed.prefix;
     saveState();
   }
 
-  function applySequentialBarcodesToSelectedRates() {
-    const clean8 = String(state.groupRunnerStart8 || '').replace(/\D/g, '');
-    if (clean8.length !== 8) {
-      showToast('กรุณากรอกเลขต้น 8 หลักให้ครบก่อนกดรันเลข');
+  function addRateEntry(idx) {
+    const r = state.selectedRates[idx];
+    if (!r) return;
+    const qEl = document.getElementById('entryQty_' + idx);
+    const pEl = document.getElementById('entryPrefix_' + idx);
+    const sEl = document.getElementById('entryStart8_' + idx);
+
+    const qty = parseInt(qEl ? qEl.value : 0, 10) || 0;
+    if (qty <= 0) {
+      showToast('กรุณาระบุจำนวนชิ้นที่ลง');
       return;
     }
-    const activeSol = currentSolutions[state.selectedSolutionIndex] || {};
-    let currentNum = parseInt(clean8, 10);
-    const prefix = (state.groupRunnerPrefix || 'RJ').toUpperCase();
 
-    state.selectedRates.forEach(r => {
-      if (r.assignBc) {
-        const q = activeSol[r.id] !== undefined ? activeSol[r.id] : (r.fixedQty ? parseInt(r.fixedQty, 10) : 0);
-        if (q > 0) {
-          r.bcPrefix = prefix;
-          r.bcStart8 = String(currentNum).padStart(8, '0');
-          currentNum += q;
-        }
-      }
+    const prefix = (pEl ? pEl.value : r.draftPrefix || 'RJ').toUpperCase().trim();
+    const clean8 = String(sEl ? sEl.value : r.draftStart8 || '').replace(/\D/g, '');
+
+    if (clean8.length > 0 && clean8.length !== 8) {
+      showToast('หากระบุเลขต้น กรุณากรอกให้ครบ 8 หลัก (หรือเว้นว่างไว้)');
+      return;
+    }
+
+    if (!Array.isArray(r.entries)) r.entries = [];
+    r.entries.push({
+      qty,
+      prefix,
+      start8: clean8.length === 8 ? clean8 : ''
     });
 
+    // If start8 was provided, auto-advance draftStart8 to the next available number!
+    if (clean8.length === 8) {
+      const nextNum = parseInt(clean8, 10) + qty;
+      r.draftStart8 = String(nextNum).padStart(8, '0');
+    } else {
+      r.draftStart8 = '';
+    }
+
     updateAll();
-    showToast('รันเลขที่ต่อเนื่องให้เรทที่เลือกเรียบร้อยแล้ว');
+    showToast(`บันทึกการลงข้อมูลเรท ${r.price}฿ จำนวน ${qty} ชิ้นแล้ว`);
+  }
+
+  function quickMarkComplete(idx, remainQty) {
+    const r = state.selectedRates[idx];
+    if (!r || remainQty <= 0) return;
+    const pEl = document.getElementById('entryPrefix_' + idx);
+    const sEl = document.getElementById('entryStart8_' + idx);
+    const prefix = (pEl ? pEl.value : r.draftPrefix || 'RJ').toUpperCase().trim();
+    const clean8 = String(sEl ? sEl.value : r.draftStart8 || '').replace(/\D/g, '');
+
+    if (!Array.isArray(r.entries)) r.entries = [];
+    r.entries.push({
+      qty: remainQty,
+      prefix,
+      start8: clean8.length === 8 ? clean8 : ''
+    });
+    r.draftStart8 = '';
+    updateAll();
+    showToast(`✅ เรท ${r.price}฿ ลงครบตามจำนวนแล้ว!`);
+  }
+
+  function removeRateEntry(idx, eIdx) {
+    const r = state.selectedRates[idx];
+    if (!r || !Array.isArray(r.entries)) return;
+    r.entries.splice(eIdx, 1);
+    updateAll();
+  }
+
+  function clearAllRecordedEntries() {
+    state.selectedRates.forEach(r => {
+      r.entries = [];
+      r.draftStart8 = '';
+    });
+    updateAll();
+    showToast('ล้างยอดการลงข้อมูลทั้งหมดแล้ว');
   }
 
   function stepRateQty(idx, currentSolvedQty, delta) {
@@ -1756,9 +1838,10 @@
     state.selectedRates.push({
       ...newRate,
       fixedQty: null,
-      assignBc: !!newRate.isAR,
-      bcPrefix: 'RJ',
-      bcStart8: ''
+      expanded: false,
+      draftPrefix: 'RJ',
+      draftStart8: '',
+      entries: []
     });
     sortSelectedRatesByPrice();
     pEl.value = '';
@@ -1774,9 +1857,10 @@
     } else {
       state.selectedRates.push({
         id, price, label, isAR, fixedQty,
-        assignBc: !!isAR,
-        bcPrefix: 'RJ',
-        bcStart8: ''
+        expanded: false,
+        draftPrefix: 'RJ',
+        draftStart8: '',
+        entries: []
       });
     }
     sortSelectedRatesByPrice();
@@ -1789,31 +1873,12 @@
     updateAll();
   }
 
-  function loadCimbExample() {
-    state.currentPresetTab = 'reg_doc';
-    state.targetTotalQty = 361;
-    state.targetTotalAmount = 8033;
-    state.selectedRates = [
-      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: null, assignBc: false, bcPrefix: 'RB', bcStart8: '14304624' },
-      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, assignBc: true, bcPrefix: 'RJ', bcStart8: '38766349' },
-      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: null, assignBc: false, bcPrefix: 'RJ', bcStart8: '' },
-      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, assignBc: true, bcPrefix: 'RJ', bcStart8: '38766671' },
-      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: null, assignBc: false, bcPrefix: 'RJ', bcStart8: '' },
-      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: null, assignBc: false, bcPrefix: 'RJ', bcStart8: '' }
-    ];
-    state.selectedSolutionIndex = 0;
-    document.getElementById('targetTotalQty').value = 361;
-    document.getElementById('targetTotalAmount').value = 8033;
-    updateAll();
-    showToast('โหลดตัวอย่าง 361 ชิ้น / 8,033฿ แล้ว');
-  }
-
   function resetAll() {
     if (!confirm('ล้างค่าเพื่อเริ่มกรอกรายการใหม่?')) return;
     state.targetTotalQty = 100;
     state.targetTotalAmount = 2200;
     state.selectedRates = [
-      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, assignBc: true, bcPrefix: 'RJ', bcStart8: '' }
+      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] }
     ];
     state.selectedSolutionIndex = 0;
     document.getElementById('targetTotalQty').value = 100;
@@ -1829,18 +1894,23 @@
     const activeSol = currentSolutions[state.selectedSolutionIndex] || {};
     const lines = [`สรุปรันตามเรทราคา (${state.targetTotalQty} ชิ้น = ${state.targetTotalAmount.toLocaleString()} บาท)`];
     state.selectedRates.forEach((r, i) => {
-      const q = activeSol[r.id] !== undefined ? activeSol[r.id] : (r.fixedQty || 0);
-      if (q > 0) {
-        let bcInfo = '';
-        const clean8 = String(r.bcStart8 || '').replace(/\D/g, '');
-        if (r.assignBc && clean8.length === 8) {
-          const sNum = parseInt(clean8, 10);
-          const eNum = sNum + q - 1;
-          const sObj = formatThaiBarcode(r.bcPrefix || 'RJ', sNum, 'TH');
-          const eObj = formatThaiBarcode(r.bcPrefix || 'RJ', eNum, 'TH');
-          bcInfo = ` | เลขที่: ${sObj.compact} ถึง ${eObj.compact}`;
-        }
-        lines.push(`${i + 1}. เรท ${r.price}฿${r.isAR ? ' (AR)' : ''}: ${q} ชิ้น = ${(q * r.price).toLocaleString()} บาท${bcInfo}`);
+      const targetQ = activeSol[r.id] !== undefined ? activeSol[r.id] : (r.fixedQty || 0);
+      if (targetQ > 0) {
+        const entries = r.entries || [];
+        const recQ = entries.reduce((acc, e) => acc + (parseInt(e.qty, 10) || 0), 0);
+        const statusTxt = recQ >= targetQ ? '✅ ครบแล้ว' : `ลงแล้ว ${recQ}/${targetQ} (เหลือ ${targetQ - recQ})`;
+        lines.push(`${i + 1}. เรท ${r.price}฿${r.isAR ? ' (AR)' : ''}: เป้าหมาย ${targetQ} ชิ้น (${(targetQ * r.price).toLocaleString()}฿) [${statusTxt}]`);
+        entries.forEach((ent, eIdx) => {
+          if (ent.start8 && ent.start8.length === 8) {
+            const sNum = parseInt(ent.start8, 10);
+            const eNum = sNum + ent.qty - 1;
+            const sObj = formatThaiBarcode(ent.prefix || 'RJ', sNum, 'TH');
+            const eObj = formatThaiBarcode(ent.prefix || 'RJ', eNum, 'TH');
+            lines.push(`   - รอบที่ ${eIdx + 1}: ${ent.qty} ชิ้น | ${sObj.compact} ถึง ${eObj.compact}`);
+          } else {
+            lines.push(`   - รอบที่ ${eIdx + 1}: ${ent.qty} ชิ้น`);
+          }
+        });
       }
     });
     navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('คัดลอกสรุปแล้ว'));
