@@ -1004,7 +1004,7 @@
   // ============================================================================
   // 3. STATE & AUTO-SAVE
   // ============================================================================
-  const STORAGE_KEY = 'POSTAL_MOBILE_MATCHER_V2';
+  const STORAGE_KEY = 'POSTAL_MOBILE_MATCHER_V3';
 
   let state = {
     currentPresetTab: 'reg_doc',
@@ -1016,12 +1016,12 @@
     ],
     customRates: [],
     selectedRates: [
-      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: 16 },
+      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: null },
       { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null },
-      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: 24 },
-      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: 1 },
-      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: 2 },
-      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: 1 }
+      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: null },
+      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: null },
+      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: null },
+      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: null }
     ],
     selectedSolutionIndex: 0
   };
@@ -1087,62 +1087,104 @@
       return { exactSolutions: [], remQty, remAmount, lockedQtySum, lockedAmountSum };
     }
 
-    const sortedFree = [...freeRates].sort((a, b) => a.price - b.price);
-    const K = sortedFree.length;
+    const K = freeRates.length;
     const solutions = [];
     const MAX_SOLUTIONS = 80;
+
+    // Special case K === 1
+    if (K === 1) {
+      const p = freeRates[0].price;
+      if (remQty >= minQtyPerRate && remQty * p === remAmount) {
+        const solMap = {};
+        lockedRates.forEach(r => { solMap[r.id] = r.solvedQty; });
+        solMap[freeRates[0].id] = remQty;
+        solutions.push(solMap);
+      }
+      return { exactSolutions: solutions, remQty, remAmount, lockedQtySum, lockedAmountSum };
+    }
+
+    // Order freeRates so that the 2 rates closest to the target average (remAmount / remQty)
+    // are placed at the end (indices K-2 and K-1) and solved in O(1) algebraically,
+    // while outlier rates (like 77฿, 62฿, 30฿) are placed first and searched from small counts (1, 2, 3...)!
+    const targetAvg = remQty > 0 ? (remAmount / remQty) : 0;
+    const sortedByDist = [...freeRates].sort((a, b) => {
+      return Math.abs(b.price - targetAvg) - Math.abs(a.price - targetAvg);
+    });
+
+    // Ensure the last two rates have distinct prices if possible
+    const rLast1 = sortedByDist[K - 2];
+    const rLast2 = sortedByDist[K - 1];
     const currentCounts = new Array(K).fill(0);
+
+    // Precompute global min and max price among all free rates for bounding
+    const allPrices = sortedByDist.map(r => r.price);
 
     function backtrack(idx, qtyLeft, amountLeft) {
       if (solutions.length >= MAX_SOLUTIONS) return;
 
-      if (idx === K - 1) {
-        const p = sortedFree[idx].price;
-        if (qtyLeft >= minQtyPerRate && qtyLeft * p === amountLeft) {
-          currentCounts[idx] = qtyLeft;
-          const solMap = {};
-          lockedRates.forEach(r => { solMap[r.id] = r.solvedQty; });
-          for (let i = 0; i < K; i++) {
-            solMap[sortedFree[i].id] = currentCounts[i];
+      // When only 2 rates remain (idx === K - 2), solve the 2x2 linear system directly in O(1)!
+      if (idx === K - 2) {
+        const p1 = rLast1.price;
+        const p2 = rLast2.price;
+        if (p1 === p2) {
+          if (qtyLeft >= 2 * minQtyPerRate && qtyLeft * p1 === amountLeft) {
+            const q1 = Math.floor(qtyLeft / 2);
+            const q2 = qtyLeft - q1;
+            const solMap = {};
+            lockedRates.forEach(r => { solMap[r.id] = r.solvedQty; });
+            for (let i = 0; i < K - 2; i++) solMap[sortedByDist[i].id] = currentCounts[i];
+            solMap[rLast1.id] = q1;
+            solMap[rLast2.id] = q2;
+            solutions.push(solMap);
           }
-          solutions.push(solMap);
+          return;
+        }
+        // p1 * q1 + p2 * q2 = amountLeft, q1 + q2 = qtyLeft
+        // => q2 * (p2 - p1) = amountLeft - p1 * qtyLeft
+        const num = amountLeft - p1 * qtyLeft;
+        const den = p2 - p1;
+        if (num % den === 0) {
+          const q2 = num / den;
+          const q1 = qtyLeft - q2;
+          if (q1 >= minQtyPerRate && q2 >= minQtyPerRate) {
+            const solMap = {};
+            lockedRates.forEach(r => { solMap[r.id] = r.solvedQty; });
+            for (let i = 0; i < K - 2; i++) solMap[sortedByDist[i].id] = currentCounts[i];
+            solMap[rLast1.id] = q1;
+            solMap[rLast2.id] = q2;
+            solutions.push(solMap);
+          }
         }
         return;
       }
 
-      const pCurrent = sortedFree[idx].price;
-      const pMinNext = sortedFree[idx + 1].price;
-      const pMaxNext = sortedFree[K - 1].price;
+      const pCurrent = sortedByDist[idx].price;
       const remainingSlots = K - 1 - idx;
+      const maxQ = qtyLeft - remainingSlots * minQtyPerRate;
+      const minQ = minQtyPerRate;
 
-      let maxQ = qtyLeft - remainingSlots * minQtyPerRate;
-      let minQ = minQtyPerRate;
-
-      const diffMin = pMinNext - pCurrent;
-      if (diffMin > 0) {
-        const neededMin = Math.ceil((qtyLeft * pMinNext - amountLeft) / diffMin);
-        if (neededMin > minQ) minQ = neededMin;
+      // Find min and max price among remaining rates (idx+1 .. K-1)
+      let remMinP = Infinity;
+      let remMaxP = -Infinity;
+      for (let j = idx + 1; j < K; j++) {
+        if (allPrices[j] < remMinP) remMinP = allPrices[j];
+        if (allPrices[j] > remMaxP) remMaxP = allPrices[j];
       }
 
-      const diffMax = pMaxNext - pCurrent;
-      if (diffMax > 0) {
-        const allowedMax = Math.floor((qtyLeft * pMaxNext - amountLeft) / diffMax);
-        if (allowedMax < maxQ) maxQ = allowedMax;
-      }
-
-      if (minQ > maxQ) return;
-
-      for (let q = maxQ; q >= minQ; q--) {
+      // Iterate from small quantities (1, 2, 3...) for outlier rates!
+      for (let q = minQ; q <= maxQ; q++) {
+        const nextQty = qtyLeft - q;
+        const nextAmt = amountLeft - q * pCurrent;
+        if (nextAmt < nextQty * remMinP || nextAmt > nextQty * remMaxP) {
+          continue;
+        }
         currentCounts[idx] = q;
-        backtrack(idx + 1, qtyLeft - q, amountLeft - q * pCurrent);
+        backtrack(idx + 1, nextQty, nextAmt);
         if (solutions.length >= MAX_SOLUTIONS) return;
       }
     }
 
     backtrack(0, remQty, remAmount);
-
-    // จัดเรียงคำตอบที่มีเรทหลักครองสัดส่วนเยอะสุดขึ้นก่อน (ตรงกับลักษณะใบนำส่งจริง)
-    solutions.sort((a, b) => Math.max(...Object.values(b)) - Math.max(...Object.values(a)));
 
     return { exactSolutions: solutions, remQty, remAmount, lockedQtySum, lockedAmountSum };
   }
@@ -1798,12 +1840,12 @@
       { id: 'b2', prefix: 'RJ', start8: '38766349', qty: 358, suffix: 'TH' }
     ];
     state.selectedRates = [
-      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: 16 },
+      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: null },
       { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null },
-      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: 24 },
-      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: 1 },
-      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: 2 },
-      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: 1 }
+      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: null },
+      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: null },
+      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: null },
+      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: null }
     ];
     state.selectedSolutionIndex = 0;
     document.getElementById('targetTotalQty').value = 361;
