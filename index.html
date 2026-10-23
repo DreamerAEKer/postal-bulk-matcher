@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบช่วยแจงเลขที่และคำนวณค่าบริการไปรษณีย์รวม (Bulk Posting Matcher)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #d32f2f;
+      --primary-dark: #b71c1c;
+      --primary-light: #ffebee;
+      --secondary: #1565c0;
+      --secondary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --warning: #ef6c00;
+      --warning-light: #fff3e0;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* Top Header */
+    header {
+      background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
+      color: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: white;
+      color: var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .autosave-badge {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-live {
+      width: 8px;
+      height: 8px;
+      background: #69f0ae;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #69f0ae;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-white {
+      background: white;
+      color: var(--primary-dark);
+    }
+    .btn-white:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline-white {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .btn-outline-white:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #0d47a1;
+    }
+
+    .btn-ghost {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+    .btn-ghost:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 13px;
+    }
+
+    /* Main Layout */
+    .container {
+      max-width: 1280px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+      padding: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-badge {
+      background: var(--primary);
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* Barcode Section */
+    .prefix-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .prefix-chips span {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+
+    .chip-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      cursor: pointer;
+      color: #334155;
+    }
+    .chip-btn:hover {
+      background: var(--secondary-light);
+      border-color: var(--secondary);
+      color: var(--secondary);
+    }
+
+    .batch-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .batch-item {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      position: relative;
+      transition: border-color 0.15s;
+    }
+
+    .batch-item:focus-within {
+      border-color: var(--secondary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+    }
+
+    .batch-row {
+      display: grid;
+      grid-template-columns: 85px 1.3fr 110px 75px auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    @media (max-width: 600px) {
+      .batch-row {
+        grid-template-columns: 75px 1fr 90px;
+      }
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      font-family: 'Sarabun', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      width: 100%;
+      color: #0f172a;
+      background: white;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.15);
+    }
+
+    .uppercase-input {
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .batch-preview {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 13.5px;
+    }
+
+    .barcode-tag {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 14px;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #bae6fd;
+      letter-spacing: 0.5px;
+    }
+
+    .check-digit-highlight {
+      color: #d32f2f;
+      text-decoration: underline;
+      font-weight: 800;
+    }
+
+    /* Target Summary Box */
+    .target-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .big-input-box {
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: all 0.15s;
+    }
+
+    .big-input-box:focus-within {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .big-input-box label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+
+    .big-input-box input {
+      font-size: 24px;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      padding: 2px 0;
+      width: 100%;
+      color: #0f172a;
+    }
+
+    .big-input-box input:focus {
+      box-shadow: none;
+    }
+
+    .big-input-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Rate Selector Buttons */
+    .service-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tab-btn {
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #334155;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--secondary);
+      color: white;
+      border-color: var(--secondary);
+    }
+
+    .rate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .rate-pill {
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.12s ease;
+      position: relative;
+      user-select: none;
+    }
+
+    .rate-pill:hover {
+      border-color: #94a3b8;
+      transform: translateY(-1px);
+    }
+
+    .rate-pill.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      box-shadow: 0 2px 6px rgba(211, 47, 47, 0.15);
+    }
+
+    .rate-pill .price {
+      font-size: 18px;
+      font-weight: 700;
+      display: block;
+    }
+
+    .rate-pill .desc {
+      font-size: 11.5px;
+      color: #475569;
+      display: block;
+    }
+
+    .rate-pill.selected .desc {
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .ar-badge {
+      display: inline-block;
+      background: #fef08a;
+      color: #854d0e;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-left: 3px;
+      border: 1px solid #fde047;
+    }
+
+    .track2-badge {
+      display: inline-block;
+      background: #ddd6fe;
+      color: #5b21b6;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-left: 3px;
+    }
+
+    /* Active Selected Rates & Lock Table */
+    .selected-rates-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .selected-rate-row {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 110px auto;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .selected-rate-row:last-child {
+      border-bottom: none;
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .qty-control input {
+      text-align: center;
+      padding: 6px;
+      font-size: 15px;
+      width: 75px;
+    }
+
+    .qty-control input.locked-input {
+      background: #fffbeb;
+      border-color: #f59e0b;
+      color: #b45309;
+    }
+
+    .lock-pill {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+
+    .lock-pill.auto {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .lock-pill.locked {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    /* Status & Diagnostics Banner */
+    .status-banner {
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 2px solid transparent;
+    }
+
+    .status-banner.match {
+      background: var(--success-light);
+      border-color: #81c784;
+      color: #1b5e20;
+    }
+
+    .status-banner.mismatch {
+      background: var(--warning-light);
+      border-color: #ffb74d;
+      color: #e65100;
+    }
+
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .status-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .solution-switcher {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .sol-btn {
+      padding: 5px 11px;
+      border-radius: 6px;
+      border: 1px solid #2e7d32;
+      background: white;
+      color: #2e7d32;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .sol-btn.active {
+      background: #2e7d32;
+      color: white;
+    }
+
+    /* Diagnostic Suggestions */
+    .diag-list {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .diag-item {
+      background: rgba(255,255,255,0.85);
+      border-left: 4px solid #f57c00;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Results Table */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .total-row td {
+      background: #f8fafc;
+      font-weight: 700;
+      font-size: 16px;
+      border-top: 2px solid #94a3b8;
+    }
+
+    .copy-chip {
+      font-family: 'Consolas', monospace;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .copy-chip:hover {
+      background: #e2e8f0;
+      border-color: #64748b;
+    }
+
+    /* Custom Rate Modal / Inline Form */
+    .custom-rate-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #f1f5f9;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .saved-jobs-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1e293b;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media print {
+      header, .no-print {
+        display: none !important;
+      }
+      .container {
+        display: block;
+      }
+      .card {
+        box-shadow: none;
+        border: 1px solid #000;
+        margin-bottom: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">ปณ</div>
+      <div>
+        <h1>ระบบช่วยแจงเลขที่และคำนวณเรทค่าบริการไปรษณีย์รวม</h1>
+        <p>คำนวณจำนวนชิ้นต่อเรทราคา + หา Check Digit อัตโนมัติ + ตัดช่วงเลขที่คีย์เข้าเครื่อง</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="autosave-badge" title="ข้อมูลทั้งหมดถูกบันทึกในเครื่องอัตโนมัติ กดรีเฟรชหรือปิดเปิดใหม่ข้อมูลไม่หาย">
+        <span class="dot-live"></span>
+        <span id="autosaveText">บันทึกข้อมูลอัตโนมัติ (รีเฟรชไม่หาย)</span>
+      </div>
+      <button class="btn btn-white" onclick="loadCimbExample()">
+        📄 โหลดตัวอย่างเอกสาร CIMB (361 ชิ้น / 8,033฿)
+      </button>
+      <button class="btn btn-outline-white" onclick="resetAll()">
+        🔄 ล้างเริ่มใหม่
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <!-- LEFT COLUMN: STEP 1 (BARCODES) & STEP 2 (TOTALS) -->
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+
+    <!-- STEP 1: BARCODE BATCHES -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">1</span>
+          ระบุหมวดเลขที่พัสดุ (เพิ่มได้หลายหมวด)
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="addBatch()">
+          + เพิ่มหมวดเลขที่
+        </button>
+      </div>
+
+      <div class="prefix-chips">
+        <span>กดเพิ่มหมวดด่วน:</span>
+        <button class="chip-btn" onclick="quickAddPrefix('RJ')">+ RJ (ลงทะเบียน)</button>
+        <button class="chip-btn" onclick="quickAddPrefix('RB')">+ RB (ลงทะเบียน)</button>
+        <button class="chip-btn" onclick="quickAddPrefix('RC')">+ RC (ลงทะเบียน)</button>
+        <button class="chip-btn" onclick="quickAddPrefix('ED')">+ ED (EMS)</button>
+        <button class="chip-btn" onclick="quickAddPrefix('EJ')">+ EJ (EMS)</button>
+        <button class="chip-btn" onclick="quickAddPrefix('EW')">+ EW (EMS)</button>
+        <button class="chip-btn" onclick="quickAddPrefix('PB')">+ PB (พัสดุ)</button>
+        <button class="chip-btn" onclick="quickAddPrefix('LP')">+ LP (ePacket)</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+        💡 <b>วิธีใช้อย่างง่าย:</b> พิมพ์แค่ <b>หมวด 2 ตัวหน้า</b> + <b>เลขต้น 8 หลัก</b> (หรือวางเลขเต็มๆ ก็ได้) + <b>จำนวนชิ้น</b> ระบบจะคำนวณหาเลขสิ้นสุดและหลัก <b>Check Digit (ขีดท้าย)</b> ให้เองอัตโนมัติ
+      </p>
+
+      <div id="batchList" class="batch-list"></div>
+
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 10px 14px; border-radius: 8px;">
+        <span style="font-weight: 600; font-size: 14px;">รวมจำนวนชิ้นจากทุกหมวดเลขที่:</span>
+        <span id="batchTotalQtyLabel" style="font-weight: 700; font-size: 17px; color: var(--secondary);">0 ชิ้น</span>
+      </div>
+    </div>
+
+    <!-- STEP 2: TARGET TOTALS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">2</span>
+          ระบุจำนวนชิ้นรวม และ ค่าบริการรวมทั้งหมด (ตามใบนำส่ง)
+        </div>
+        <label style="font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+          <input type="checkbox" id="syncQtyCheckbox" checked onchange="toggleSyncQty()">
+          ใช้จำนวนชิ้นรวมตามหมวดเลขที่อัตโนมัติ
+        </label>
+      </div>
+
+      <div class="target-grid">
+        <div class="big-input-box">
+          <label for="targetTotalQty">📦 จำนวนชิ้นรวมทั้งหมด (ชิ้น)</label>
+          <input type="number" id="targetTotalQty" min="1" value="361" oninput="onTargetInput()">
+          <div class="big-input-sub">
+            <span id="qtySourceHint">ดึงยอดจากหมวดเลขที่</span>
+          </div>
+        </div>
+
+        <div class="big-input-box" style="border-color: #fca5a5; background: #fff5f5;">
+          <label for="targetTotalAmount" style="color: var(--primary-dark);">💰 ค่าบริการรวมทั้งหมด (บาท)</label>
+          <input type="number" id="targetTotalAmount" min="0" step="1" value="8033" style="color: var(--primary-dark);" oninput="onTargetInput()">
+          <div class="big-input-sub">
+            <span>ยอดเงินสุทธิตามใบนำส่งลูกค้า</span>
+            <span id="avgPriceLabel" style="font-weight: 600;">เฉลี่ย 22.25 ฿/ชิ้น</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Jobs History -->
+      <div class="saved-jobs-bar no-print">
+        <span style="font-size: 13px; font-weight: 700; color: #475569;">💾 บันทึก/สลับงาน:</span>
+        <input type="text" id="jobNameInput" placeholder="ชื่อใบงาน เช่น CIMB 22 ต.ค." style="width: 170px; font-size: 13px; padding: 6px 10px;">
+        <button class="btn btn-ghost btn-sm" onclick="saveCurrentJob()">บันทึกเก็บไว้</button>
+        <select id="savedJobsSelect" style="width: 190px; font-size: 13px; padding: 6px;" onchange="loadSelectedJob()">
+          <option value="">-- เลือกใบงานที่บันทึกไว้ --</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="deleteSelectedJob()" title="ลบใบงานที่เลือก">🗑️</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN: STEP 3 (SERVICE & RATES SELECTION + LOCKING) -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="step-badge">3</span>
+        จิ้มเลือกบริการหลัก และ เรทค่าบริการที่มีในเอกสาร
+      </div>
+    </div>
+
+    <div class="service-tabs">
+      <button class="tab-btn active" id="tab_reg_doc" onclick="switchPresetGroup('reg_doc')">
+        📮 ลงทะเบียน (เรทใบนำส่ง 19 / 22 AR / 24...)
+      </button>
+      <button class="tab-btn" id="tab_reg_2568" onclick="switchPresetGroup('reg_2568')">
+        📮 ลงทะเบียน (เรทใหม่ 18 / 21 AR...)
+      </button>
+      <button class="tab-btn" id="tab_ems" onclick="switchPresetGroup('ems')">
+        ⚡ EMS ในประเทศ
+      </button>
+      <button class="tab-btn" id="tab_inter" onclick="switchPresetGroup('inter')">
+        ✈️ พัสดุ / ต่างประเทศ / อื่นๆ
+      </button>
+    </div>
+
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">
+      👇 <b>จิ้มเลือกเรทราคา</b> ที่พบในใบนำส่ง (เลือกได้หลายเรท):
+    </p>
+
+    <div id="ratePresetGrid" class="rate-grid"></div>
+
+    <!-- Add Custom Rate Bar -->
+    <div class="custom-rate-bar no-print">
+      <span style="font-size: 13px; font-weight: 700;">+ เพิ่มเรทราคาเอง:</span>
+      <input type="number" id="customRatePrice" placeholder="ราคา (บาท)" style="width: 105px; font-size: 13.5px; padding: 6px 8px;">
+      <input type="text" id="customRateLabel" placeholder="คำอธิบาย (เช่น หีบห่อ/EMS)" style="width: 155px; font-size: 13.5px; padding: 6px 8px;">
+      <label style="font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="checkbox" id="customRateAR"> มี AR (ตอบรับ)
+      </label>
+      <label style="font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 4px; cursor: pointer;" title="สำหรับ EMS ตอบรับ หรือ ลงทะเบียนตอบรับแบบติดบาร์โค้ดบนใบตอบรับ (ใช้ 2 เลขที่)">
+        <input type="checkbox" id="customRateTrack2"> ใช้ 2 เลขที่ (ใบตอบรับมีเลข)
+      </label>
+      <button class="btn btn-secondary btn-sm" onclick="addCustomRate()">เพิ่มเรทนี้</button>
+    </div>
+
+    <!-- Selected Rates & Optional Fixed Quantity Controls -->
+    <div class="selected-rates-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+        <span style="font-weight: 700; font-size: 14.5px; color: #0f172a;">
+          🎯 เรทราคาที่เลือกใช้งาน (<span id="selectedCountLabel">0</span> เรท)
+        </span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-ghost btn-sm" onclick="unlockAllRates()" title="ปลดล็อกทุกเรทเพื่อให้ระบบคำนวณเองทั้งหมด">
+            🔓 ให้แอปคำนวณเองทุกเรท
+          </button>
+        </div>
+      </div>
+      <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">
+        💡 <b>เคล็ดลับ:</b> หากเรทไหนคุณเห็นจำนวนชิ้นชัดเจน (เช่น หน้าสุดท้ายมี <b>77฿ = 1 ชิ้น</b>) สามารถพิมพ์ตัวเลขเพื่อ <b>"ล็อกจำนวน"</b> ได้เลย ส่วนช่องที่ปล่อยว่าง แอปจะคำนวณหาจำนวนชิ้นที่เหลือให้ตรงกับยอดรวมอัตโนมัติ!
+      </p>
+
+      <div id="selectedRatesList"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM FULL-WIDTH: STEP 4 (SOLVER DIAGNOSTICS & BARCODE RANGE ALLOCATION TABLE) -->
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="step-badge">4</span>
+        ผลลัพธ์การคำนวณจำนวนชิ้นต่อเรท และ ตารางแจงช่วงเลขที่สำหรับคีย์เข้าเครื่อง
+      </div>
+      <div class="no-print" style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-ghost btn-sm" onclick="copySummaryText()">
+          📋 คัดลอกสรุปทั้งหมด
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">
+          🖨️ พิมพ์ใบสรุปคีย์เครื่อง
+        </button>
+      </div>
+    </div>
+
+    <!-- Solver Status & Smart Diagnostics Banner -->
+    <div id="solverStatusBanner" class="status-banner match"></div>
+
+    <!-- Final Barcode Allocation Table -->
+    <div class="table-responsive">
+      <table id="allocationTable">
+        <thead>
+          <tr>
+            <th style="width: 60px;">ลำดับ</th>
+            <th>หมวดเลขที่</th>
+            <th>เลขที่เริ่มต้น (Start)</th>
+            <th>เลขที่สิ้นสุด (End)</th>
+            <th>เรทค่าบริการ / บริการพิเศษ</th>
+            <th class="text-center">จำนวน (ชิ้น)</th>
+            <th class="text-right">ราคา/ชิ้น (บาท)</th>
+            <th class="text-right">รวมเป็นเงิน (บาท)</th>
+            <th class="text-center no-print">จัดลำดับ</th>
+          </tr>
+        </thead>
+        <tbody id="allocationTableBody"></tbody>
+        <tfoot id="allocationTableFoot"></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">คัดลอกข้อมูลเรียบร้อยแล้ว</div>
+
+<script>
+  // ============================================================================
+  // 1. UPU S10 CHECK DIGIT CALCULATOR (มาตรฐานไปรษณีย์ไทย 13 หลัก)
+  // ============================================================================
+  const S10_WEIGHTS = [8, 6, 4, 2, 3, 5, 9, 7];
+
+  function calcS10CheckDigit(eightDigitsStr) {
+    const clean = String(eightDigitsStr).replace(/\D/g, '');
+    if (clean.length !== 8) return '?';
+    let sum = 0;
+    for (let i = 0; i < 8; i++) {
+      sum += parseInt(clean[i], 10) * S10_WEIGHTS[i];
+    }
+    const rem = sum % 11;
+    const c = 11 - rem;
+    if (c === 10) return '0';
+    if (c === 11) return '5';
+    return String(c);
+  }
+
+  function formatThaiBarcode(prefix, num8, suffix = 'TH') {
+    const p = (prefix || 'RJ').toUpperCase().trim();
+    const s = (suffix || 'TH').toUpperCase().trim();
+    const str8 = String(num8).padStart(8, '0');
+    const cd = calcS10CheckDigit(str8);
+    // Format nicely: RJ 3876 6349 9 TH and compact RJ387663499TH
+    const spaced = `${p} ${str8.slice(0, 4)} ${str8.slice(4, 8)} ${cd} ${s}`;
+    const compact = `${p}${str8}${cd}${s}`;
+    return { prefix: p, str8, cd, suffix: s, spaced, compact };
+  }
+
+  // Smart parser if user pastes full barcode like "RJ387663499TH" or "RB 1430 4624-5"
+  function parseSmartBarcodeInput(rawText, currentPrefix) {
+    const cleaned = String(rawText).toUpperCase().replace(/[^A-Z0-9]/g, '');
+    // Match 2 letters + 8 or 9 digits
+    const fullMatch = cleaned.match(/^([A-Z]{2})(\d{8})(\d)?([A-Z]{2})?$/);
+    if (fullMatch) {
+      return {
+        prefix: fullMatch[1],
+        start8: fullMatch[2]
+      };
+    }
+    // Otherwise extract up to 8 digits
+    const digits = cleaned.replace(/\D/g, '').slice(0, 8);
+    return {
+      prefix: currentPrefix,
+      start8: digits
+    };
+  }
+
+  // ============================================================================
+  // 2. PRESET RATE CATALOGS
+  // ============================================================================
+  const PRESET_GROUPS = {
+    reg_doc: [
+      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, isTrack2: false },
+      { id: 'r22ar', price: 22, label: 'ลงทะเบียน 19 + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, isTrack2: false },
+      { id: 'r27ar', price: 27, label: 'ลงทะเบียน 24 + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'r29', price: 29, label: 'ลงทะเบียน พิกัด 3', isAR: false, isTrack2: false },
+      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, isTrack2: false },
+      { id: 'r32ar', price: 32, label: 'ลงทะเบียน 29 + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'r33ar', price: 33, label: 'ลงทะเบียน 30 + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'r37', price: 37, label: 'ลงทะเบียน 37฿', isAR: false, isTrack2: false },
+      { id: 'r40ar', price: 40, label: 'ลงทะเบียน 37 + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'r45', price: 45, label: 'ลงทะเบียน 45฿', isAR: false, isTrack2: false },
+      { id: 'r48ar', price: 48, label: 'ลงทะเบียน 45 + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'r62', price: 62, label: 'ลงทะเบียน 62฿', isAR: false, isTrack2: false },
+      { id: 'r77', price: 77, label: 'ลงทะเบียน พิกัดใหญ่', isAR: false, isTrack2: false },
+      { id: 'r80ar', price: 80, label: 'ลงทะเบียน 77 + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'r_ar_track2', price: 35, label: 'ลงทะเบียน+ใบตอบรับมีเลข', isAR: true, isTrack2: true }
+    ],
+    reg_2568: [
+      { id: 'n18', price: 18, label: 'ซอง ≤10g (5+13)', isAR: false, isTrack2: false },
+      { id: 'n21ar', price: 21, label: 'ซอง ≤10g + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'n20', price: 20, label: 'ซอง ≤20g (7+13)', isAR: false, isTrack2: false },
+      { id: 'n23ar', price: 23, label: 'ซอง ≤20g + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'n23', price: 23, label: 'ซอง ≤100g (10+13)', isAR: false, isTrack2: false },
+      { id: 'n26ar', price: 26, label: 'ซอง ≤100g + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'n28', price: 28, label: 'ซอง ≤250g (15+13)', isAR: false, isTrack2: false },
+      { id: 'n31ar', price: 31, label: 'ซอง ≤250g + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'n38', price: 38, label: 'ซอง ≤500g (25+13)', isAR: false, isTrack2: false },
+      { id: 'n41ar', price: 41, label: 'ซอง ≤500g + AR 3฿', isAR: true, isTrack2: false },
+      { id: 'n48', price: 48, label: 'ซอง ≤1kg (35+13)', isAR: false, isTrack2: false },
+      { id: 'n68', price: 68, label: 'ซอง ≤2kg (55+13)', isAR: false, isTrack2: false }
+    ],
+    ems: [
+      { id: 'e32', price: 32, label: 'EMS ≤20g', isAR: false, isTrack2: false },
+      { id: 'e37', price: 37, label: 'EMS ≤100g', isAR: false, isTrack2: false },
+      { id: 'e42', price: 42, label: 'EMS ≤250g', isAR: false, isTrack2: false },
+      { id: 'e52', price: 52, label: 'EMS ≤500g', isAR: false, isTrack2: false },
+      { id: 'e67', price: 67, label: 'EMS ≤1kg', isAR: false, isTrack2: false },
+      { id: 'e82', price: 82, label: 'EMS ≤1.5kg', isAR: false, isTrack2: false },
+      { id: 'e97', price: 97, label: 'EMS ≤2kg', isAR: false, isTrack2: false },
+      { id: 'e112', price: 112, label: 'EMS ≤2.5kg', isAR: false, isTrack2: false },
+      { id: 'e127', price: 127, label: 'EMS ≤3kg', isAR: false, isTrack2: false },
+      { id: 'e32_ar2', price: 51, label: 'EMS 32 + ตอบรับมีเลข', isAR: true, isTrack2: true },
+      { id: 'e37_ar2', price: 56, label: 'EMS 37 + ตอบรับมีเลข', isAR: true, isTrack2: true },
+      { id: 'e42_ar2', price: 61, label: 'EMS 42 + ตอบรับมีเลข', isAR: true, isTrack2: true }
+    ],
+    inter: [
+      { id: 'p20', price: 20, label: 'พัสดุ ≤1kg', isAR: false, isTrack2: false },
+      { id: 'p35', price: 35, label: 'พัสดุ ≤2kg', isAR: false, isTrack2: false },
+      { id: 'p50', price: 50, label: 'พัสดุ ≤3kg', isAR: false, isTrack2: false },
+      { id: 'p65', price: 65, label: 'พัสดุ ≤4kg', isAR: false, isTrack2: false },
+      { id: 'ep120', price: 120, label: 'ePacket โซนเอเชีย', isAR: false, isTrack2: false },
+      { id: 'ep150', price: 150, label: 'ePacket 150฿', isAR: false, isTrack2: false },
+      { id: 'ep240', price: 240, label: 'ePacket ยุโรป/เมกา', isAR: false, isTrack2: false },
+      { id: 'ra95', price: 95, label: 'ลงทะเบียน ตปท. 95฿', isAR: false, isTrack2: false }
+    ]
+  };
+
+  // ============================================================================
+  // 3. APPLICATION STATE & PERSISTENCE (LOCALSTORAGE)
+  // ============================================================================
+  const STORAGE_KEY = 'POSTAL_BULK_MATCHER_STATE_V1';
+  const SAVED_JOBS_KEY = 'POSTAL_BULK_SAVED_JOBS_V1';
+
+  let state = {
+    currentPresetTab: 'reg_doc',
+    syncQtyWithBatches: true,
+    targetTotalQty: 361,
+    targetTotalAmount: 8033,
+    batches: [
+      { id: 'b1', prefix: 'RB', start8: '14304624', qty: 3, suffix: 'TH' },
+      { id: 'b2', prefix: 'RJ', start8: '38766349', qty: 358, suffix: 'TH' }
+    ],
+    customRates: [],
+    // Selected rates for current calculation:
+    // fixedQty: null means auto-solve, number means locked by user
+    selectedRates: [
+      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, isTrack2: false, fixedQty: 16 },
+      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, isTrack2: false, fixedQty: 24 },
+      { id: 'r22ar', price: 22, label: 'ลงทะเบียน 19 + AR 3฿', isAR: true, isTrack2: false, fixedQty: null },
+      { id: 'r27ar', price: 27, label: 'ลงทะเบียน 24 + AR 3฿', isAR: true, isTrack2: false, fixedQty: 1 },
+      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, isTrack2: false, fixedQty: 2 },
+      { id: 'r77', price: 77, label: 'ลงทะเบียน พิกัดใหญ่', isAR: false, isTrack2: false, fixedQty: 1 }
+    ],
+    selectedSolutionIndex: 0
+  };
+
+  let currentSolutions = [];
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const el = document.getElementById('autosaveText');
+      if (el) {
+        const now = new Date();
+        const timeStr = now.toTimeString().slice(0, 8);
+        el.textContent = `บันทึกอัตโนมัติแล้ว (${timeStr})`;
+      }
+    } catch (e) {
+      console.error('Failed to save state:', e);
+    }
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.batches) && Array.isArray(parsed.selectedRates)) {
+          state = Object.assign({}, state, parsed);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load state:', e);
+    }
+  }
+
+  // ============================================================================
+  // 4. SMART SOLVER ENGINE (DIOPHANTINE EQUATION + DIAGNOSTICS)
+  // ============================================================================
+  /**
+   * Solves:
+   *   sum(q_i) = remainingQty
+   *   sum(q_i * price_i) = remainingAmount
+   *   where q_i >= 1 (since the user explicitly selected that rate as present in the document)
+   */
+  function solveRateDistribution(totalQty, totalAmount, selectedRates) {
+    const lockedRates = [];
+    const freeRates = [];
+
+    let lockedQtySum = 0;
+    let lockedAmountSum = 0;
+
+    selectedRates.forEach((r) => {
+      if (r.fixedQty !== null && r.fixedQty !== '' && !isNaN(r.fixedQty) && Number(r.fixedQty) >= 0) {
+        const q = Math.round(Number(r.fixedQty));
+        lockedRates.push({ ...r, solvedQty: q });
+        lockedQtySum += q;
+        lockedAmountSum += q * r.price;
+      } else {
+        freeRates.push({ ...r });
+      }
+    });
+
+    const remQty = totalQty - lockedQtySum;
+    const remAmount = totalAmount - lockedAmountSum;
+
+    // Case 0: No free rates left
+    if (freeRates.length === 0) {
+      if (remQty === 0 && remAmount === 0) {
+        const map = {};
+        lockedRates.forEach(r => { map[r.id] = r.solvedQty; });
+        return { exactSolutions: [map], remQty, remAmount, lockedQtySum, lockedAmountSum };
+      } else {
+        return { exactSolutions: [], remQty, remAmount, lockedQtySum, lockedAmountSum };
+      }
+    }
+
+    if (remQty < freeRates.length || remAmount < 0) {
+      return { exactSolutions: [], remQty, remAmount, lockedQtySum, lockedAmountSum };
+    }
+
+    // Sort free rates by price ascending for fast pruning
+    const sortedFree = [...freeRates].sort((a, b) => a.price - b.price);
+    const K = sortedFree.length;
+    const solutions = [];
+    const MAX_SOLUTIONS = 60;
+
+    // Each selected free rate should have at least 1 item (minQty = 1)
+    const minQtyPerRate = 1;
+    const currentCounts = new Array(K).fill(0);
+
+    function backtrack(idx, qtyLeft, amountLeft) {
+      if (solutions.length >= MAX_SOLUTIONS) return;
+
+      if (idx === K - 1) {
+        const p = sortedFree[idx].price;
+        if (qtyLeft >= minQtyPerRate && qtyLeft * p === amountLeft) {
+          currentCounts[idx] = qtyLeft;
+          const solMap = {};
+          lockedRates.forEach(r => { solMap[r.id] = r.solvedQty; });
+          for (let i = 0; i < K; i++) {
+            solMap[sortedFree[i].id] = currentCounts[i];
+          }
+          solutions.push(solMap);
+        }
+        return;
+      }
+
+      const pCurrent = sortedFree[idx].price;
+      const pMinNext = sortedFree[idx + 1].price;
+      const pMaxNext = sortedFree[K - 1].price;
+      const remainingSlotsAfterThis = K - 1 - idx;
+
+      // Bounds for q at idx:
+      // 1) q >= minQtyPerRate
+      // 2) q <= qtyLeft - remainingSlotsAfterThis * minQtyPerRate
+      let maxQ = qtyLeft - remainingSlotsAfterThis * minQtyPerRate;
+
+      // Also bound by amountLeft:
+      // amountLeft - q * pCurrent >= (qtyLeft - q) * pMinNext
+      // => amountLeft - qtyLeft * pMinNext >= q * (pCurrent - pMinNext)
+      // Since pCurrent < pMinNext (or <=), (pMinNext - pCurrent) * q >= qtyLeft * pMinNext - amountLeft
+      const diffMin = pMinNext - pCurrent;
+      let minQ = minQtyPerRate;
+      if (diffMin > 0) {
+        const neededMin = Math.ceil((qtyLeft * pMinNext - amountLeft) / diffMin);
+        if (neededMin > minQ) minQ = neededMin;
+      }
+
+      const diffMax = pMaxNext - pCurrent;
+      if (diffMax > 0) {
+        const allowedMax = Math.floor((qtyLeft * pMaxNext - amountLeft) / diffMax);
+        if (allowedMax < maxQ) maxQ = allowedMax;
+      }
+
+      if (minQ > maxQ) return;
+
+      // Iterate from largest or middle to find natural postal distributions
+      for (let q = maxQ; q >= minQ; q--) {
+        currentCounts[idx] = q;
+        backtrack(idx + 1, qtyLeft - q, amountLeft - q * pCurrent);
+        if (solutions.length >= MAX_SOLUTIONS) return;
+      }
+    }
+
+    backtrack(0, remQty, remAmount);
+
+    // Sort solutions by "most dominant primary rate" (realistic for bulk mail where 1 rate is 80%+ of volume)
+    solutions.sort((a, b) => {
+      const maxA = Math.max(...Object.values(a));
+      const maxB = Math.max(...Object.values(b));
+      return maxB - maxA;
+    });
+
+    return { exactSolutions: solutions, remQty, remAmount, lockedQtySum, lockedAmountSum };
+  }
+
+  /**
+   * Smart Diagnostics when no exact solution is found
+   */
+  function generateDiagnostics(totalQty, totalAmount, selectedRates, solveResult) {
+    const diagnostics = [];
+    const { remQty, remAmount, lockedQtySum, lockedAmountSum } = solveResult;
+
+    // 1. Check if batch barcode total disagrees with targetTotalQty
+    const batchSum = state.batches.reduce((acc, b) => acc + (parseInt(b.qty, 10) || 0), 0);
+    if (batchSum > 0 && batchSum !== totalQty) {
+      diagnostics.push({
+        text: `⚠️ <b>จำนวนชิ้นจากหมวดเลขที่ (${batchSum} ชิ้น)</b> ไม่ตรงกับจำนวนชิ้นรวมที่ระบุ (${totalQty} ชิ้น) ต่างกัน <b>${Math.abs(batchSum - totalQty)} ชิ้น</b>`,
+        actionLabel: `ปรับเป็น ${batchSum} ชิ้น`,
+        actionFn: `setTargetQty(${batchSum})`
+      });
+    }
+
+    if (selectedRates.length === 0) {
+      diagnostics.push({
+        text: `กรุณาจิ้มเลือกเรทค่าบริการอย่างน้อย 1 เรทในขั้นตอนที่ 3`
+      });
+      return diagnostics;
+    }
+
+    const freeRates = selectedRates.filter(r => r.fixedQty === null || r.fixedQty === '');
+
+    if (freeRates.length === 0) {
+      const diffQty = totalQty - lockedQtySum;
+      const diffAmt = totalAmount - lockedAmountSum;
+      if (diffQty !== 0 || diffAmt !== 0) {
+        diagnostics.push({
+          text: `🔒 คุณล็อกจำนวนชิ้นครบทุกเรทแล้ว ได้ผลรวม <b>${lockedQtySum} ชิ้น เป็นเงิน ${lockedAmountSum.toLocaleString()} บาท</b> (ต่างจากเป้าหมาย ${diffQty > 0 ? '+' : ''}${diffQty} ชิ้น / ${diffAmt > 0 ? '+' : ''}${diffAmt} บาท)`,
+          actionLabel: `ปรับยอดรวมตามที่ล็อก (${lockedAmountSum.toLocaleString()}฿)`,
+          actionFn: `setTargetQtyAndAmount(${lockedQtySum}, ${lockedAmountSum})`
+        });
+      }
+      return diagnostics;
+    }
+
+    // Check min/max possible amount with current selected rates
+    const minFreePrice = Math.min(...freeRates.map(r => r.price));
+    const maxFreePrice = Math.max(...freeRates.map(r => r.price));
+
+    // Minimum possible if each free rate gets at least 1 item and the rest go to minFreePrice
+    const baseOneEachAmt = freeRates.reduce((acc, r) => acc + r.price, 0);
+    const restCount = Math.max(0, remQty - freeRates.length);
+    const minPossibleTotal = lockedAmountSum + baseOneEachAmt + restCount * minFreePrice;
+    const maxPossibleTotal = lockedAmountSum + baseOneEachAmt + restCount * maxFreePrice;
+
+    if (totalAmount < minPossibleTotal) {
+      const diff = minPossibleTotal - totalAmount;
+      diagnostics.push({
+        text: `📉 <b>ยอดเงินรวมตามเอกสาร (${totalAmount.toLocaleString()} บาท) ต่ำกว่าขั้นต่ำที่เป็นไปได้:</b> จากเรทที่เลือก ${totalQty} ชิ้น จะต้องมียอดรวมอย่างน้อย <b>${minPossibleTotal.toLocaleString()} บาท</b> (ขาดไป ${diff.toLocaleString()} บาท) — อาจมีเรทที่ถูกกว่านี้ปนอยู่ หรือลูกค้าบวกยอดรวมผิด`,
+        actionLabel: `ลองแก้ยอดรวมเป็น ${minPossibleTotal.toLocaleString()}฿`,
+        actionFn: `setTargetAmount(${minPossibleTotal})`
+      });
+    } else if (totalAmount > maxPossibleTotal) {
+      const diff = totalAmount - maxPossibleTotal;
+      diagnostics.push({
+        text: `📈 <b>ยอดเงินรวมตามเอกสาร (${totalAmount.toLocaleString()} บาท) สูงกว่าเพดานของเรทที่เลือก:</b> จากเรทที่เลือก ${totalQty} ชิ้น ยอดสูงสุดที่เป็นไปได้คือ <b>${maxPossibleTotal.toLocaleString()} บาท</b> (เกินมา ${diff.toLocaleString()} บาท) — น่าจะมีเรทราคาสูงกว่านี้ปนอยู่ หรือลูกค้าบวกเลขผิด`
+      });
+    }
+
+    // 2. Check nearby total amounts (Customer addition error +/- 1 to 20 Baht)
+    for (let delta = 1; delta <= 20; delta++) {
+      for (const sign of [-1, 1]) {
+        const testAmt = totalAmount + sign * delta;
+        if (testAmt <= 0) continue;
+        const testRes = solveRateDistribution(totalQty, testAmt, selectedRates);
+        if (testRes.exactSolutions.length > 0) {
+          const reason = sign > 0
+            ? `ลูกค้าอาจบวกยอดเงินขาดไป ${delta} บาท`
+            : `ลูกค้าอาจบวกยอดเงินเกินมา ${delta} บาท`;
+          diagnostics.push({
+            text: `🧮 <b>ข้อสังเกตการบวกเลขผิด:</b> หากยอดเงินรวมเป็น <b>${testAmt.toLocaleString()} บาท</b> (${reason}) จะสามารถจัดเรทที่เลือกไว้ลงตัวพอดี ${totalQty} ชิ้น!`,
+            actionLabel: `ใช้ยอด ${testAmt.toLocaleString()} บาท`,
+            actionFn: `setTargetAmount(${testAmt})`
+          });
+          break;
+        }
+      }
+      if (diagnostics.length >= 3) break;
+    }
+
+    // 3. Check if adding 1 more rate from catalog (1 to 5 items) makes it solve!
+    const allCatalogRates = [
+      ...PRESET_GROUPS.reg_doc,
+      ...PRESET_GROUPS.reg_2568,
+      ...PRESET_GROUPS.ems,
+      ...state.customRates
+    ];
+    const selectedPrices = new Set(selectedRates.map(r => r.price));
+
+    for (const candidate of allCatalogRates) {
+      if (selectedPrices.has(candidate.price)) continue;
+      for (let cQty = 1; cQty <= 5; cQty++) {
+        const testRates = [
+          ...selectedRates,
+          { ...candidate, fixedQty: cQty }
+        ];
+        const testRes = solveRateDistribution(totalQty, totalAmount, testRates);
+        if (testRes.exactSolutions.length > 0) {
+          diagnostics.push({
+            text: `💡 <b>แนะนำเรทที่อาจตกหล่น:</b> หากมีเรท <b>${candidate.price} บาท (${candidate.label}) จำนวน ${cQty} ชิ้น</b> ปนอยู่ในกองนี้ จะทำให้ยอด <b>${totalQty} ชิ้น = ${totalAmount.toLocaleString()} บาท</b> ลงตัวพอดี!`,
+            actionLabel: `+ เพิ่มเรท ${candidate.price}฿ (${cQty} ชิ้น)`,
+            actionFn: `addSuggestedRate('${candidate.id}', ${candidate.price}, '${candidate.label}', ${candidate.isAR}, ${candidate.isTrack2}, ${cQty})`
+          });
+          break;
+        }
+      }
+      if (diagnostics.length >= 5) break;
+    }
+
+    return diagnostics;
+  }
+
+  // ============================================================================
+  // 5. UI RENDERING FUNCTIONS
+  // ============================================================================
+  function renderBatches() {
+    const container = document.getElementById('batchList');
+    let html = '';
+    let totalBatchQty = 0;
+
+    state.batches.forEach((b, idx) => {
+      const qtyNum = Math.max(0, parseInt(b.qty, 10) || 0);
+      totalBatchQty += qtyNum;
+
+      const cleanStart = String(b.start8 || '').replace(/\D/g, '');
+      let previewHtml = '';
+
+      if (cleanStart.length === 8 && qtyNum > 0) {
+        const startNum = parseInt(cleanStart, 10);
+        const endNum = startNum + qtyNum - 1;
+        const startObj = formatThaiBarcode(b.prefix, startNum, b.suffix);
+        const endObj = formatThaiBarcode(b.prefix, endNum, b.suffix);
+
+        previewHtml = `
+          <div class="batch-preview">
+            <div>
+              <span style="color: var(--text-muted); font-size: 12.5px;">ช่วงเลขที่:</span>
+              <span class="barcode-tag">${startObj.prefix} ${startObj.str8.slice(0,4)} ${startObj.str8.slice(4,8)} <span class="check-digit-highlight" title="Check Digit คำนวณอัตโนมัติ">${startObj.cd}</span> ${startObj.suffix}</span>
+              <span style="margin: 0 4px; font-weight: 700;">ถึง</span>
+              <span class="barcode-tag">${endObj.prefix} ${endObj.str8.slice(0,4)} ${endObj.str8.slice(4,8)} <span class="check-digit-highlight" title="Check Digit คำนวณอัตโนมัติ">${endObj.cd}</span> ${endObj.suffix}</span>
+            </div>
+            <span style="font-weight: 700; color: var(--success);">รวม ${qtyNum} ชิ้น</span>
+          </div>
+        `;
+      } else {
+        previewHtml = `
+          <div class="batch-preview" style="color: var(--warning);">
+            <span>⚠️ กรุณากรอกเลขเริ่มต้นให้ครบ 8 หลัก (ขณะนี้ ${cleanStart.length}/8 หลัก) และระบุจำนวนชิ้น</span>
+          </div>
+        `;
+      }
+
+      html += `
+        <div class="batch-item">
+          <div class="batch-row">
+            <div class="field-group">
+              <label>หมวด 2 ตัวหน้า</label>
+              <input type="text" class="uppercase-input" maxlength="2" value="${b.prefix}"
+                oninput="updateBatchField(${idx}, 'prefix', this.value)">
+            </div>
+            <div class="field-group">
+              <label>เลขเริ่มต้น 8 หลัก (ไม่ต้องใส่ขีดท้าย)</label>
+              <input type="text" placeholder="เช่น 38766349" value="${b.start8}"
+                oninput="updateBatchStart(${idx}, this.value)">
+            </div>
+            <div class="field-group">
+              <label>จำนวน (ชิ้น)</label>
+              <input type="number" min="1" value="${b.qty}"
+                oninput="updateBatchField(${idx}, 'qty', this.value)">
+            </div>
+            <div class="field-group">
+              <label>ประเทศ</label>
+              <input type="text" class="uppercase-input" maxlength="2" value="${b.suffix || 'TH'}"
+                oninput="updateBatchField(${idx}, 'suffix', this.value)">
+            </div>
+            <div class="field-group">
+              <button class="btn btn-ghost btn-sm" onclick="removeBatch(${idx})" title="ลบหมวดนี้" ${state.batches.length <= 1 ? 'disabled' : ''}>
+                ✕
+              </button>
+            </div>
+          </div>
+          ${previewHtml}
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+    document.getElementById('batchTotalQtyLabel').textContent = `${totalBatchQty.toLocaleString()} ชิ้น`;
+
+    if (state.syncQtyWithBatches && totalBatchQty > 0) {
+      state.targetTotalQty = totalBatchQty;
+      document.getElementById('targetTotalQty').value = totalBatchQty;
+    }
+  }
+
+  function renderPresetGrid() {
+    const grid = document.getElementById('ratePresetGrid');
+    const list = [
+      ...(PRESET_GROUPS[state.currentPresetTab] || []),
+      ...state.customRates
+    ];
+
+    const selectedIds = new Set(state.selectedRates.map(r => r.id));
+
+    grid.innerHTML = list.map(item => {
+      const isSel = selectedIds.has(item.id);
+      const arBadge = item.isAR ? `<span class="ar-badge">AR</span>` : '';
+      const t2Badge = item.isTrack2 ? `<span class="track2-badge">2 เลข</span>` : '';
+      return `
+        <div class="rate-pill ${isSel ? 'selected' : ''}" onclick="toggleSelectRate('${item.id}')">
+          <span class="price">${item.price} ฿ ${arBadge}${t2Badge}</span>
+          <span class="desc">${item.label}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderSelectedRatesList(activeSolutionMap = {}) {
+    const container = document.getElementById('selectedRatesList');
+    document.getElementById('selectedCountLabel').textContent = state.selectedRates.length;
+
+    if (state.selectedRates.length === 0) {
+      container.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted);">ยังไม่ได้เลือกเรทราคา กรุณาจิ้มเลือกเรทด้านบน</div>`;
+      return;
+    }
+
+    container.innerHTML = state.selectedRates.map((r, idx) => {
+      const isLocked = r.fixedQty !== null && r.fixedQty !== '' && !isNaN(r.fixedQty);
+      const solvedQty = activeSolutionMap[r.id] !== undefined ? activeSolutionMap[r.id] : (isLocked ? Number(r.fixedQty) : 0);
+      const displayVal = isLocked ? r.fixedQty : '';
+      const placeholderVal = activeSolutionMap[r.id] !== undefined ? `${activeSolutionMap[r.id]} (ออโต้)` : 'ออโต้';
+      const subtotal = solvedQty * r.price;
+
+      const arBadge = r.isAR ? `<span class="ar-badge">บริการตอบรับ AR</span>` : '';
+      const t2Badge = r.isTrack2 ? `<span class="track2-badge">ใช้ 2 เลขที่</span>` : '';
+
+      return `
+        <div class="selected-rate-row">
+          <div>
+            <div style="font-weight: 700; font-size: 16px; color: #0f172a;">
+              เรท ${r.price} บาท ${arBadge} ${t2Badge}
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);">${r.label}</div>
+          </div>
+
+          <div>
+            <span class="lock-pill ${isLocked ? 'locked' : 'auto'}">
+              ${isLocked ? '🔒 ล็อกจำนวนชิ้น' : '⚡ คำนวณอัตโนมัติ'}
+            </span>
+            <div style="font-size: 13px; font-weight: 700; color: #334155; margin-top: 2px;">
+              ได้ ${solvedQty.toLocaleString()} ชิ้น = ${subtotal.toLocaleString()} ฿
+            </div>
+          </div>
+
+          <div class="qty-control">
+            <input type="number" min="0" class="${isLocked ? 'locked-input' : ''}"
+              placeholder="${placeholderVal}"
+              value="${displayVal}"
+              title="พิมพ์ตัวเลขเพื่อล็อกจำนวนชิ้น หรือลบออกเพื่อให้คำนวณอัตโนมัติ"
+              oninput="updateRateFixedQty(${idx}, this.value)">
+            ${isLocked ? `<button class="btn btn-ghost btn-sm" onclick="updateRateFixedQty(${idx}, '')" title="ปลดล็อกให้คำนวณออโต้">🔓</button>` : ''}
+          </div>
+
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-ghost btn-sm" onclick="removeSelectedRate(${idx})" title="เอาเรทนี้ออก">✕</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderCalculationAndTable() {
+    const totalQty = parseInt(state.targetTotalQty, 10) || 0;
+    const totalAmount = parseFloat(state.targetTotalAmount) || 0;
+
+    // Update average label
+    const avgEl = document.getElementById('avgPriceLabel');
+    if (totalQty > 0) {
+      avgEl.textContent = `เฉลี่ย ${(totalAmount / totalQty).toFixed(2)} ฿/ชิ้น`;
+    } else {
+      avgEl.textContent = '';
+    }
+
+    const solveResult = solveRateDistribution(totalQty, totalAmount, state.selectedRates);
+    currentSolutions = solveResult.exactSolutions;
+
+    if (state.selectedSolutionIndex >= currentSolutions.length) {
+      state.selectedSolutionIndex = 0;
+    }
+
+    const activeSolution = currentSolutions[state.selectedSolutionIndex] || {};
+    renderSelectedRatesList(activeSolution);
+
+    const banner = document.getElementById('solverStatusBanner');
+
+    if (currentSolutions.length > 0) {
+      banner.className = 'status-banner match';
+
+      // Build summary chips of the active solution
+      const summaryParts = state.selectedRates.map(r => {
+        const q = activeSolution[r.id] || 0;
+        return `<span style="background: white; padding: 3px 10px; border-radius: 6px; border: 1px solid #81c784; font-weight: 700;">เรท ${r.price}฿${r.isAR ? ' (AR)' : ''} × ${q} ชิ้น = ${(q * r.price).toLocaleString()}฿</span>`;
+      }).join(' + ');
+
+      let switcherHtml = '';
+      if (currentSolutions.length > 1) {
+        const btns = currentSolutions.slice(0, 8).map((sol, sIdx) => {
+          const labelDesc = state.selectedRates.map(r => `${r.price}฿:${sol[r.id]}`).join(', ');
+          return `<button class="sol-btn ${sIdx === state.selectedSolutionIndex ? 'active' : ''}" onclick="selectSolution(${sIdx})">แบบที่ ${sIdx + 1} (${labelDesc})</button>`;
+        }).join('');
+        switcherHtml = `
+          <div class="solution-switcher no-print">
+            <span style="font-size: 13px; font-weight: 700;">💡 พบชุดคำตอบที่ลงตัว ${currentSolutions.length} รูปแบบ (คลิกสลับเลือกได้ หรือล็อกจำนวนชิ้นในขั้นตอนที่ 3):</span>
+            ${btns}
+          </div>
+        `;
+      }
+
+      banner.innerHTML = `
+        <div class="status-header">
+          <div class="status-title">
+            ✅ คำนวณลงตัวพอดี! รวม ${totalQty.toLocaleString()} ชิ้น = ${totalAmount.toLocaleString()} บาท
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px;">
+          ${summaryParts}
+        </div>
+        ${switcherHtml}
+      `;
+    } else {
+      banner.className = 'status-banner mismatch';
+      const diags = generateDiagnostics(totalQty, totalAmount, state.selectedRates, solveResult);
+      const diagHtml = diags.map(d => `
+        <div class="diag-item">
+          <span>${d.text}</span>
+          ${d.actionLabel ? `<button class="btn btn-secondary btn-sm" onclick="${d.actionFn}">${d.actionLabel}</button>` : ''}
+        </div>
+      `).join('');
+
+      banner.innerHTML = `
+        <div class="status-header">
+          <div class="status-title">
+            ⚠️ ยังไม่สามารถจัดจำนวนชิ้นให้ตรงกับยอด ${totalQty.toLocaleString()} ชิ้น / ${totalAmount.toLocaleString()} บาท ได้พอดี
+          </div>
+        </div>
+        <p style="font-size: 14px;">ระบบวิเคราะห์สาเหตุและข้อสังเกตที่เป็นไปได้ดังนี้ครับ:</p>
+        <div class="diag-list">${diagHtml}</div>
+      `;
+    }
+
+    renderBarcodeAllocationTable(activeSolution);
+  }
+
+  /**
+   * Allocates sequential barcodes from state.batches across the solved rate quantities
+   */
+  function renderBarcodeAllocationTable(activeSolution) {
+    const tbody = document.getElementById('allocationTableBody');
+    const tfoot = document.getElementById('allocationTableFoot');
+
+    // Prepare expanded stream of barcode blocks from batches
+    const batchQueues = state.batches.map(b => {
+      const clean8 = String(b.start8 || '').replace(/\D/g, '');
+      const qty = Math.max(0, parseInt(b.qty, 10) || 0);
+      return {
+        prefix: (b.prefix || 'RJ').toUpperCase().trim(),
+        suffix: (b.suffix || 'TH').toUpperCase().trim(),
+        currentNum: clean8.length === 8 ? parseInt(clean8, 10) : null,
+        remaining: qty
+      };
+    }).filter(b => b.remaining > 0);
+
+    let batchIdx = 0;
+    let rowsHtml = '';
+    let rowCounter = 1;
+    let grandTotalQty = 0;
+    let grandTotalAmt = 0;
+
+    state.selectedRates.forEach((rate, rIndex) => {
+      const neededQty = activeSolution[rate.id] !== undefined
+        ? activeSolution[rate.id]
+        : (rate.fixedQty ? parseInt(rate.fixedQty, 10) : 0);
+
+      if (!neededQty || neededQty <= 0) return;
+
+      let qtyToAllocate = neededQty;
+
+      while (qtyToAllocate > 0) {
+        // Find next available batch
+        while (batchIdx < batchQueues.length && batchQueues[batchIdx].remaining <= 0) {
+          batchIdx++;
+        }
+
+        if (batchIdx >= batchQueues.length) {
+          // No more barcode batches defined, show unallocated row
+          const subAmt = qtyToAllocate * rate.price;
+          grandTotalQty += qtyToAllocate;
+          grandTotalAmt += subAmt;
+
+          rowsHtml += `
+            <tr>
+              <td class="text-center">${rowCounter++}</td>
+              <td><span style="color: var(--text-muted);">ยังไม่ระบุหมวด</span></td>
+              <td colspan="2"><span style="color: var(--warning); font-size: 13px;">(กรุณาเพิ่มจำนวนชิ้นในหมวดเลขที่อีก ${qtyToAllocate} ชิ้น)</span></td>
+              <td>
+                <b>เรท ${rate.price} บาท</b> (${rate.label})
+                ${rate.isAR ? '<span class="ar-badge">AR ตอบรับ</span>' : ''}
+                ${rate.isTrack2 ? '<span class="track2-badge">ใช้ 2 เลขที่คู่กัน</span>' : ''}
+              </td>
+              <td class="text-center"><b>${qtyToAllocate.toLocaleString()}</b></td>
+              <td class="text-right">${rate.price.toLocaleString()}</td>
+              <td class="text-right"><b>${subAmt.toLocaleString()}</b></td>
+              <td class="text-center no-print">
+                <button class="btn btn-ghost btn-sm" onclick="moveRateOrder(${rIndex}, -1)" ${rIndex === 0 ? 'disabled' : ''}>↑</button>
+                <button class="btn btn-ghost btn-sm" onclick="moveRateOrder(${rIndex}, 1)" ${rIndex === state.selectedRates.length - 1 ? 'disabled' : ''}>↓</button>
+              </td>
+            </tr>
+          `;
+          qtyToAllocate = 0;
+          break;
+        }
+
+        const currentBatch = batchQueues[batchIdx];
+        const take = Math.min(qtyToAllocate, currentBatch.remaining);
+
+        let startBarcodeCell = '-';
+        let endBarcodeCell = '-';
+
+        if (currentBatch.currentNum !== null) {
+          const startNum = currentBatch.currentNum;
+          const endNum = startNum + take - 1;
+          const sObj = formatThaiBarcode(currentBatch.prefix, startNum, currentBatch.suffix);
+          const eObj = formatThaiBarcode(currentBatch.prefix, endNum, currentBatch.suffix);
+
+          startBarcodeCell = `
+            <span class="copy-chip" onclick="copyText('${sObj.compact}')" title="คลิกเพื่อคัดลอก ${sObj.compact}">
+              ${sObj.prefix} ${sObj.str8.slice(0,4)} ${sObj.str8.slice(4,8)} <span class="check-digit-highlight">${sObj.cd}</span> ${sObj.suffix} 📋
+            </span>
+          `;
+          endBarcodeCell = `
+            <span class="copy-chip" onclick="copyText('${eObj.compact}')" title="คลิกเพื่อคัดลอก ${eObj.compact}">
+              ${eObj.prefix} ${eObj.str8.slice(0,4)} ${eObj.str8.slice(4,8)} <span class="check-digit-highlight">${eObj.cd}</span> ${eObj.suffix} 📋
+            </span>
+          `;
+
+          currentBatch.currentNum += take;
+        }
+
+        currentBatch.remaining -= take;
+        qtyToAllocate -= take;
+
+        const subAmt = take * rate.price;
+        grandTotalQty += take;
+        grandTotalAmt += subAmt;
+
+        rowsHtml += `
+          <tr>
+            <td class="text-center">${rowCounter++}</td>
+            <td><b>${currentBatch.prefix}...${currentBatch.suffix}</b></td>
+            <td>${startBarcodeCell}</td>
+            <td>${endBarcodeCell}</td>
+            <td>
+              <b>เรท ${rate.price} บาท</b> <span style="color: var(--text-muted); font-size: 13px;">(${rate.label})</span>
+              ${rate.isAR ? '<span class="ar-badge">AR ตอบรับ</span>' : ''}
+              ${rate.isTrack2 ? '<span class="track2-badge">ใช้ 2 เลขที่คู่กัน</span>' : ''}
+            </td>
+            <td class="text-center"><b style="font-size: 16px; color: var(--secondary);">${take.toLocaleString()}</b></td>
+            <td class="text-right">${rate.price.toLocaleString()}</td>
+            <td class="text-right"><b style="font-size: 15.5px;">${subAmt.toLocaleString()}</b></td>
+            <td class="text-center no-print">
+              <button class="btn btn-ghost btn-sm" onclick="moveRateOrder(${rIndex}, -1)" title="ขยับเรทนี้ขึ้นไปตัดเลขก่อน" ${rIndex === 0 ? 'disabled' : ''}>↑</button>
+              <button class="btn btn-ghost btn-sm" onclick="moveRateOrder(${rIndex}, 1)" title="ขยับเรทนี้ลงไปตัดเลขทีหลัง" ${rIndex === state.selectedRates.length - 1 ? 'disabled' : ''}>↓</button>
+            </td>
+          </tr>
+        `;
+      }
+    });
+
+    if (!rowsHtml) {
+      rowsHtml = `<tr><td colspan="9" class="text-center" style="padding: 24px; color: var(--text-muted);">ยังไม่มีรายการจัดสรรเลขที่</td></tr>`;
+    }
+
+    tbody.innerHTML = rowsHtml;
+    tfoot.innerHTML = `
+      <tr class="total-row">
+        <td colspan="5" class="text-right">รวมทั้งสิ้น</td>
+        <td class="text-center" style="color: var(--secondary);">${grandTotalQty.toLocaleString()} ชิ้น</td>
+        <td></td>
+        <td class="text-right" style="color: var(--primary-dark);">${grandTotalAmt.toLocaleString()} บาท</td>
+        <td class="no-print"></td>
+      </tr>
+    `;
+  }
+
+  // ============================================================================
+  // 6. USER INTERACTION HANDLERS
+  // ============================================================================
+  function updateAll() {
+    saveState();
+    renderBatches();
+    renderPresetGrid();
+    renderCalculationAndTable();
+  }
+
+  function addBatch(prefix = 'RJ', start8 = '', qty = 1) {
+    state.batches.push({
+      id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      prefix,
+      start8,
+      qty,
+      suffix: 'TH'
+    });
+    updateAll();
+  }
+
+  function quickAddPrefix(prefix) {
+    // If last batch is empty, just set its prefix
+    const last = state.batches[state.batches.length - 1];
+    if (last && !last.start8) {
+      last.prefix = prefix;
+      updateAll();
+    } else {
+      addBatch(prefix, '', 10);
+    }
+  }
+
+  function removeBatch(idx) {
+    if (state.batches.length <= 1) return;
+    state.batches.splice(idx, 1);
+    updateAll();
+  }
+
+  function updateBatchField(idx, field, val) {
+    if (!state.batches[idx]) return;
+    if (field === 'prefix' || field === 'suffix') {
+      state.batches[idx][field] = String(val).toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2);
+    } else if (field === 'qty') {
+      state.batches[idx].qty = Math.max(0, parseInt(val, 10) || 0);
+    }
+    saveState();
+    // Re-compute totals without losing input cursor focus if possible
+    const totalBatchQty = state.batches.reduce((acc, b) => acc + (parseInt(b.qty, 10) || 0), 0);
+    document.getElementById('batchTotalQtyLabel').textContent = `${totalBatchQty.toLocaleString()} ชิ้น`;
+    if (state.syncQtyWithBatches && totalBatchQty > 0) {
+      state.targetTotalQty = totalBatchQty;
+      document.getElementById('targetTotalQty').value = totalBatchQty;
+    }
+    renderBatches();
+    renderCalculationAndTable();
+  }
+
+  function updateBatchStart(idx, rawVal) {
+    if (!state.batches[idx]) return;
+    const parsed = parseSmartBarcodeInput(rawVal, state.batches[idx].prefix);
+    state.batches[idx].prefix = parsed.prefix;
+    state.batches[idx].start8 = parsed.start8;
+    saveState();
+    renderBatches();
+    renderCalculationAndTable();
+  }
+
+  function toggleSyncQty() {
+    state.syncQtyWithBatches = document.getElementById('syncQtyCheckbox').checked;
+    updateAll();
+  }
+
+  function onTargetInput() {
+    const q = parseInt(document.getElementById('targetTotalQty').value, 10) || 0;
+    const a = parseFloat(document.getElementById('targetTotalAmount').value) || 0;
+    const batchSum = state.batches.reduce((acc, b) => acc + (parseInt(b.qty, 10) || 0), 0);
+    if (q !== batchSum) {
+      state.syncQtyWithBatches = false;
+      document.getElementById('syncQtyCheckbox').checked = false;
+    }
+    state.targetTotalQty = q;
+    state.targetTotalAmount = a;
+    state.selectedSolutionIndex = 0;
+    saveState();
+    renderCalculationAndTable();
+  }
+
+  function setTargetQty(q) {
+    state.targetTotalQty = q;
+    document.getElementById('targetTotalQty').value = q;
+    updateAll();
+  }
+
+  function setTargetAmount(a) {
+    state.targetTotalAmount = a;
+    document.getElementById('targetTotalAmount').value = a;
+    updateAll();
+  }
+
+  function setTargetQtyAndAmount(q, a) {
+    state.targetTotalQty = q;
+    state.targetTotalAmount = a;
+    document.getElementById('targetTotalQty').value = q;
+    document.getElementById('targetTotalAmount').value = a;
+    updateAll();
+  }
+
+  function switchPresetGroup(groupKey) {
+    state.currentPresetTab = groupKey;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById('tab_' + groupKey);
+    if (activeBtn) activeBtn.classList.add('active');
+    saveState();
+    renderPresetGrid();
+  }
+
+  function findCatalogRateById(id) {
+    for (const grp of Object.values(PRESET_GROUPS)) {
+      const found = grp.find(r => r.id === id);
+      if (found) return found;
+    }
+    return state.customRates.find(r => r.id === id);
+  }
+
+  function toggleSelectRate(rateId) {
+    const existingIdx = state.selectedRates.findIndex(r => r.id === rateId);
+    if (existingIdx >= 0) {
+      state.selectedRates.splice(existingIdx, 1);
+    } else {
+      const tpl = findCatalogRateById(rateId);
+      if (tpl) {
+        state.selectedRates.push({ ...tpl, fixedQty: null });
+      }
+    }
+    state.selectedSolutionIndex = 0;
+    updateAll();
+  }
+
+  function addCustomRate() {
+    const priceInput = document.getElementById('customRatePrice');
+    const labelInput = document.getElementById('customRateLabel');
+    const arInput = document.getElementById('customRateAR');
+    const t2Input = document.getElementById('customRateTrack2');
+
+    const price = parseFloat(priceInput.value);
+    if (!price || price <= 0) {
+      showToast('กรุณาระบุราคา (บาท) ให้ถูกต้อง');
+      return;
+    }
+    const isAR = arInput.checked;
+    const isTrack2 = t2Input.checked;
+    const label = labelInput.value.trim() || `เรทกำหนดเอง ${price}฿`;
+    const newRate = {
+      id: 'cust_' + Date.now(),
+      price,
+      label,
+      isAR,
+      isTrack2
+    };
+    state.customRates.push(newRate);
+    state.selectedRates.push({ ...newRate, fixedQty: null });
+
+    priceInput.value = '';
+    labelInput.value = '';
+    arInput.checked = false;
+    t2Input.checked = false;
+
+    updateAll();
+    showToast(`เพิ่มเรท ${price} บาท เรียบร้อยแล้ว`);
+  }
+
+  function addSuggestedRate(id, price, label, isAR, isTrack2, fixedQty) {
+    const existing = state.selectedRates.find(r => r.id === id || (r.price === price && r.isAR === isAR));
+    if (existing) {
+      existing.fixedQty = fixedQty;
+    } else {
+      state.selectedRates.push({ id, price, label, isAR, isTrack2, fixedQty });
+    }
+    updateAll();
+  }
+
+  function updateRateFixedQty(idx, val) {
+    if (!state.selectedRates[idx]) return;
+    if (val === '' || val === null) {
+      state.selectedRates[idx].fixedQty = null;
+    } else {
+      state.selectedRates[idx].fixedQty = Math.max(0, parseInt(val, 10) || 0);
+    }
+    state.selectedSolutionIndex = 0;
+    saveState();
+    renderCalculationAndTable();
+  }
+
+  function unlockAllRates() {
+    state.selectedRates.forEach(r => { r.fixedQty = null; });
+    state.selectedSolutionIndex = 0;
+    updateAll();
+    showToast('ปลดล็อกให้ระบบคำนวณอัตโนมัติทุกเรทแล้ว');
+  }
+
+  function removeSelectedRate(idx) {
+    state.selectedRates.splice(idx, 1);
+    state.selectedSolutionIndex = 0;
+    updateAll();
+  }
+
+  function moveRateOrder(idx, dir) {
+    const targetIdx = idx + dir;
+    if (targetIdx < 0 || targetIdx >= state.selectedRates.length) return;
+    const temp = state.selectedRates[idx];
+    state.selectedRates[idx] = state.selectedRates[targetIdx];
+    state.selectedRates[targetIdx] = temp;
+    updateAll();
+  }
+
+  function selectSolution(sIdx) {
+    state.selectedSolutionIndex = sIdx;
+    saveState();
+    renderCalculationAndTable();
+  }
+
+  // ============================================================================
+  // 7. EXAMPLE LOADER, RESET & SAVED JOBS HISTORY
+  // ============================================================================
+  function loadCimbExample() {
+    state.currentPresetTab = 'reg_doc';
+    state.syncQtyWithBatches = true;
+    state.targetTotalQty = 361;
+    state.targetTotalAmount = 8033;
+    state.batches = [
+      { id: 'b1', prefix: 'RB', start8: '14304624', qty: 3, suffix: 'TH' },
+      { id: 'b2', prefix: 'RJ', start8: '38766349', qty: 358, suffix: 'TH' }
+    ];
+    state.selectedRates = [
+      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, isTrack2: false, fixedQty: 16 },
+      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, isTrack2: false, fixedQty: 24 },
+      { id: 'r22ar', price: 22, label: 'ลงทะเบียน 19 + AR 3฿', isAR: true, isTrack2: false, fixedQty: null },
+      { id: 'r27ar', price: 27, label: 'ลงทะเบียน 24 + AR 3฿', isAR: true, isTrack2: false, fixedQty: 1 },
+      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, isTrack2: false, fixedQty: 2 },
+      { id: 'r77', price: 77, label: 'ลงทะเบียน พิกัดใหญ่', isAR: false, isTrack2: false, fixedQty: 1 }
+    ];
+    state.selectedSolutionIndex = 0;
+
+    document.getElementById('targetTotalQty').value = 361;
+    document.getElementById('targetTotalAmount').value = 8033;
+    document.getElementById('syncQtyCheckbox').checked = true;
+
+    updateAll();
+    showToast('โหลดข้อมูลเอกสาร CIMB (361 ชิ้น / 8,033 บาท) เรียบร้อยแล้ว');
+  }
+
+  function resetAll() {
+    if (!confirm('ต้องการล้างข้อมูลปัจจุบันเพื่อเริ่มกรอกใบงานใหม่ใช่หรือไม่?')) return;
+    state.batches = [
+      { id: 'b_new', prefix: 'RJ', start8: '', qty: 10, suffix: 'TH' }
+    ];
+    state.targetTotalQty = 10;
+    state.targetTotalAmount = 220;
+    state.selectedRates = [
+      { id: 'r22ar', price: 22, label: 'ลงทะเบียน 19 + AR 3฿', isAR: true, isTrack2: false, fixedQty: null }
+    ];
+    state.selectedSolutionIndex = 0;
+    document.getElementById('targetTotalQty').value = 10;
+    document.getElementById('targetTotalAmount').value = 220;
+    updateAll();
+    showToast('ล้างข้อมูลเริ่มใหม่เรียบร้อย');
+  }
+
+  function getSavedJobs() {
+    try {
+      return JSON.parse(localStorage.getItem(SAVED_JOBS_KEY) || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function renderSavedJobsDropdown() {
+    const jobs = getSavedJobs();
+    const sel = document.getElementById('savedJobsSelect');
+    sel.innerHTML = `<option value="">-- เลือกใบงานที่บันทึกไว้ (${jobs.length}) --</option>` +
+      jobs.map((j, i) => `<option value="${i}">${j.name} (${j.state.targetTotalQty} ชิ้น / ${j.state.targetTotalAmount}฿)</option>`).join('');
+  }
+
+  function saveCurrentJob() {
+    const nameInput = document.getElementById('jobNameInput');
+    const name = nameInput.value.trim() || `ใบงาน ${new Date().toLocaleDateString('th-TH')} ${new Date().toTimeString().slice(0,5)}`;
+    const jobs = getSavedJobs();
+    jobs.unshift({
+      name,
+      savedAt: new Date().toISOString(),
+      state: JSON.parse(JSON.stringify(state))
+    });
+    localStorage.setItem(SAVED_JOBS_KEY, JSON.stringify(jobs.slice(0, 30)));
+    nameInput.value = '';
+    renderSavedJobsDropdown();
+    showToast(`บันทึกใบงาน "${name}" เรียบร้อยแล้ว`);
+  }
+
+  function loadSelectedJob() {
+    const sel = document.getElementById('savedJobsSelect');
+    const idx = sel.value;
+    if (idx === '') return;
+    const jobs = getSavedJobs();
+    if (jobs[idx]) {
+      state = JSON.parse(JSON.stringify(jobs[idx].state));
+      document.getElementById('targetTotalQty').value = state.targetTotalQty;
+      document.getElementById('targetTotalAmount').value = state.targetTotalAmount;
+      document.getElementById('syncQtyCheckbox').checked = !!state.syncQtyWithBatches;
+      updateAll();
+      showToast(`โหลดใบงาน "${jobs[idx].name}" แล้ว`);
+    }
+  }
+
+  function deleteSelectedJob() {
+    const sel = document.getElementById('savedJobsSelect');
+    const idx = sel.value;
+    if (idx === '') return;
+    const jobs = getSavedJobs();
+    const removed = jobs.splice(idx, 1);
+    localStorage.setItem(SAVED_JOBS_KEY, JSON.stringify(jobs));
+    renderSavedJobsDropdown();
+    if (removed[0]) showToast(`ลบใบงาน "${removed[0].name}" แล้ว`);
+  }
+
+  // ============================================================================
+  // 8. CLIPBOARD HELPERS
+  // ============================================================================
+  function copyText(txt) {
+    navigator.clipboard.writeText(txt).then(() => {
+      showToast(`คัดลอก ${txt} แล้ว`);
+    });
+  }
+
+  function copySummaryText() {
+    const rows = [];
+    rows.push(`สรุปการแจงเลขที่และค่าบริการไปรษณีย์รวม`);
+    rows.push(`จำนวนรวม: ${state.targetTotalQty} ชิ้น | ค่าบริการรวม: ${state.targetTotalAmount.toLocaleString()} บาท`);
+    rows.push(`----------------------------------------`);
+    const trs = document.querySelectorAll('#allocationTableBody tr');
+    trs.forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      if (tds.length >= 8) {
+        const seq = tds[0].innerText.trim();
+        const startBc = tds[2].innerText.replace('📋', '').trim();
+        const endBc = tds[3].innerText.replace('📋', '').trim();
+        const rateDesc = tds[4].innerText.trim();
+        const qty = tds[5].innerText.trim();
+        const total = tds[7].innerText.trim();
+        rows.push(`${seq}. ${startBc} ถึง ${endBc} | ${rateDesc} | จำนวน ${qty} ชิ้น = ${total} บาท`);
+      }
+    });
+    navigator.clipboard.writeText(rows.join('\n')).then(() => {
+      showToast('คัดลอกตารางสรุปทั้งหมดลงคลิปบอร์ดแล้ว');
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  // Initialize on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    loadState();
+    document.getElementById('targetTotalQty').value = state.targetTotalQty;
+    document.getElementById('targetTotalAmount').value = state.targetTotalAmount;
+    document.getElementById('syncQtyCheckbox').checked = !!state.syncQtyWithBatches;
+    renderSavedJobsDropdown();
+    updateAll();
+  });
+</script>
+</body>
+</html>
