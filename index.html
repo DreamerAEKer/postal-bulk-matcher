@@ -46,7 +46,7 @@
     }
 
     body {
-      padding-bottom: 60px;
+      padding-bottom: 90px; /* Space for bottom sticky mobile bar */
     }
 
     header {
@@ -73,6 +73,7 @@
       align-items: center;
       gap: 8px;
       min-width: 0;
+      cursor: pointer;
     }
 
     .brand-icon {
@@ -112,6 +113,8 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      cursor: pointer;
+      user-select: none;
     }
 
     .dot-green {
@@ -121,16 +124,23 @@
       border-radius: 50%;
     }
 
-    .btn-reset-top {
+    .btn-header-action {
       font-family: inherit;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
-      padding: 4px 9px;
+      padding: 4px 8px;
       border-radius: 7px;
-      background: rgba(0,0,0,0.22);
+      background: rgba(255,255,255,0.2);
       color: white;
       border: 1px solid rgba(255,255,255,0.35);
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-header-action:hover {
+      background: rgba(255,255,255,0.3);
     }
 
     .main-wrap {
@@ -196,6 +206,7 @@
       background: #f8fafc;
       border-radius: 11px;
       padding: 8px 11px;
+      position: relative;
     }
 
     .stat-input-card:focus-within {
@@ -240,10 +251,35 @@
       color: var(--text-muted);
     }
 
+    /* SERVICE CATEGORY SELECTOR */
+    .service-category-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .service-category-badge.ems-mode {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+    }
+
+    .service-category-badge.non-ems-mode {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+    }
+
     .service-tabs {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 5px;
+      gap: 6px;
       margin-bottom: 10px;
     }
 
@@ -258,18 +294,30 @@
       font-size: 12.5px;
       font-weight: 700;
       padding: 8px 6px;
-      border-radius: 8px;
+      border-radius: 9px;
       border: 1.5px solid #cbd5e1;
       background: #f8fafc;
       color: #334155;
       cursor: pointer;
       text-align: center;
+      transition: all 0.15s;
+    }
+
+    .srv-tab:hover {
+      background: #f1f5f9;
     }
 
     .srv-tab.active {
       background: var(--secondary);
       color: white;
       border-color: var(--secondary);
+      box-shadow: 0 2px 4px rgba(29, 78, 216, 0.2);
+    }
+
+    .srv-tab.active.ems-tab {
+      background: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 2px 4px rgba(211, 47, 47, 0.2);
     }
 
     .rate-grid {
@@ -293,12 +341,19 @@
       text-align: center;
       cursor: pointer;
       user-select: none;
+      position: relative;
+      transition: all 0.12s;
+    }
+
+    .rate-btn:active {
+      transform: scale(0.97);
     }
 
     .rate-btn.active {
       border-color: var(--primary);
       background: var(--primary-light);
       color: var(--primary-dark);
+      box-shadow: 0 1px 4px rgba(211, 47, 47, 0.15);
     }
 
     .rate-btn .r-price {
@@ -379,6 +434,11 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      transition: background 0.12s;
+    }
+
+    .btn-sm:hover {
+      background: #f8fafc;
     }
 
     .btn-sm.primary {
@@ -387,15 +447,27 @@
       border-color: var(--secondary);
     }
 
+    .btn-sm.primary:hover {
+      background: #1e40af;
+    }
+
     .btn-sm.success {
       background: var(--success);
       color: white;
       border-color: var(--success);
     }
 
-    /* ===================================================================== */
-    /* STEP 2: SUMMARY DASHBOARD (FULL TEXT VISIBILITY - NEVER TRUNCATED)    */
-    /* ===================================================================== */
+    .btn-sm.success:hover {
+      background: #166534;
+    }
+
+    .btn-sm.danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
+
+    /* STEP 2: SUMMARY DASHBOARD */
     .summary-banner {
       border-radius: 11px;
       padding: 10px 12px;
@@ -477,7 +549,6 @@
       cursor: pointer;
     }
 
-    /* Row 1: Rate Badge + Stepper + Total Money */
     .s-line-top {
       display: flex;
       align-items: center;
@@ -521,7 +592,6 @@
       white-space: nowrap;
     }
 
-    /* Row 2: Full Status Message (Never truncated!) + Controls */
     .s-line-bottom {
       display: flex;
       align-items: center;
@@ -541,7 +611,6 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      /* Never cut off with ellipsis! */
       white-space: normal;
       word-break: keep-all;
     }
@@ -620,6 +689,9 @@
       border: 1px solid #bfdbfe;
       white-space: nowrap;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
     }
 
     .s-row-card.st-done .expand-pill {
@@ -676,7 +748,7 @@
 
     .drawer-form {
       display: grid;
-      grid-template-columns: 78px 56px 1fr;
+      grid-template-columns: 82px 58px 1fr;
       gap: 6px;
       align-items: end;
       margin-bottom: 8px;
@@ -703,7 +775,7 @@
 
     .copy-bc-pill {
       font-family: 'Consolas', monospace;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 800;
       background: #f8fafc;
       color: #0f172a;
@@ -719,9 +791,7 @@
       font-weight: 800;
     }
 
-    /* ===================================================================== */
-    /* STEP 3 (COLLAPSIBLE AT BOTTOM): POS COUNTER VERIFICATION LOG          */
-    /* ===================================================================== */
+    /* STEP 3: POS COUNTER LOG */
     .pos-check-toggle {
       width: 100%;
       background: #0f172a;
@@ -801,18 +871,163 @@
       flex-wrap: wrap;
     }
 
+    /* BOTTOM FLOATING BAR FOR MOBILE */
+    .mobile-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      padding: 8px 12px;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+      z-index: 90;
+      display: flex;
+      justify-content: center;
+    }
+
+    .mobile-bottom-inner {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .btn-mobile-act {
+      flex: 1;
+      padding: 9px 8px;
+      border-radius: 9px;
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .btn-mobile-save {
+      background: #15803d;
+      color: white;
+    }
+
+    .btn-mobile-save:active {
+      background: #166534;
+    }
+
+    .btn-mobile-history {
+      background: #1e293b;
+      color: white;
+      border: 1px solid #475569;
+    }
+
+    .btn-mobile-copy {
+      background: #1d4ed8;
+      color: white;
+    }
+
+    /* MODAL: HISTORY & SAVE */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: white;
+      width: 100%;
+      max-width: 580px;
+      max-height: 85vh;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 14px 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-close-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: #e2e8f0;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 16px;
+      color: #475569;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 14px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .history-card {
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .history-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
     .toast {
       position: fixed;
-      bottom: 18px;
+      bottom: 74px;
       left: 50%;
       transform: translateX(-50%) translateY(10px);
       background: #0f172a;
       color: white;
-      padding: 8px 15px;
+      padding: 8px 16px;
       border-radius: 99px;
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
       opacity: 0;
       pointer-events: none;
       transition: all 0.2s;
@@ -830,16 +1045,21 @@
 
 <header>
   <div class="header-inner">
-    <div class="brand">
+    <div class="brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
       <div class="brand-icon">ปณ</div>
-      <div class="brand-title">คำนวณเรท & เช็กยอดการลงข้อมูล</div>
+      <div class="brand-title">คำนวณเรท & บันทึกยอดไปรษณีย์</div>
     </div>
     <div class="header-right">
-      <div class="autosave-pill">
+      <div class="autosave-pill" onclick="showSavedInfoToast()" title="กดเพื่อตรวจสอบสถานะการบันทึก">
         <span class="dot-green"></span>
         <span id="autosaveText">บันทึกอัตโนมัติ</span>
       </div>
-      <button class="btn-reset-top" onclick="resetAll()">🔄 เริ่มใหม่</button>
+      <button class="btn-header-action" onclick="openHistoryModal()">
+        📜 ประวัติ (<span id="headerHistoryCount">0</span>)
+      </button>
+      <button class="btn-header-action" onclick="resetAll()">
+        🔄 ล้างใหม่
+      </button>
     </div>
   </div>
 </header>
@@ -847,13 +1067,13 @@
 <div class="main-wrap">
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 1: กรอกจำนวนรวม + ราคารวม + จิ้มเลือกเรทที่มี                 -->
+  <!-- ส่วนที่ 1: ข้อมูลตั้งต้น & จิ้มเลือกเรท                                  -->
   <!-- ===================================================================== -->
   <div class="card">
     <div class="section-head">
       <div class="section-title">
         <span class="step-num">1</span>
-        <span>กรอกจำนวนรวม & ราคารวม แล้วจิ้มเรทที่มี</span>
+        <span>กรอกยอดรวม แล้วจิ้มเลือกเรทที่มี</span>
       </div>
       <button class="btn-sm primary" onclick="autoFindBestRatesForService()">
         ✨ แจงเรทอัตโนมัติ
@@ -863,57 +1083,63 @@
     <div class="top-inputs-grid">
       <div class="stat-input-card">
         <label for="targetTotalQty">📦 จำนวนชิ้นรวม (ชิ้น)</label>
-        <input type="number" id="targetTotalQty" inputmode="numeric" min="1" value="361" oninput="onTargetInput()">
+        <input type="number" id="targetTotalQty" inputmode="numeric" min="1" placeholder="0" value="361" oninput="onTargetInput()">
         <div class="stat-sub">จำนวนฉบับ/ชิ้นทั้งหมด</div>
       </div>
 
       <div class="stat-input-card amount-card">
         <label for="targetTotalAmount">💰 ค่าบริการรวม (บาท)</label>
-        <input type="number" id="targetTotalAmount" inputmode="decimal" min="0" value="8033" oninput="onTargetInput()">
+        <input type="number" id="targetTotalAmount" inputmode="decimal" min="0" placeholder="0" value="8033" oninput="onTargetInput()">
         <div class="stat-sub" id="avgPriceLabel">เฉลี่ย 22.25 ฿/ชิ้น</div>
       </div>
     </div>
 
-    <!-- เลือกบริการหลัก -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
-      <span style="font-size: 12px; font-weight: 700; color: #475569;">เลือกบริการหลัก:</span>
+    <!-- แถบแจ้งสถานะโหมดบริการ (EMS แยกเด็ดขาด / ลงทะเบียนรวมกันได้) -->
+    <div id="serviceModeNotice" class="service-category-badge non-ems-mode">
+      <span id="serviceModeText">📮 หมวดไปรษณียภัณฑ์ & พัสดุ (สามารถรวมเรทลงทะเบียน/eCo-Post ด้วยกันได้)</span>
       <label id="fuelChargeToggleWrap" style="display: none; font-size: 11.5px; font-weight: 800; background: #fff7ed; color: #c2410c; border: 1px solid #fdba74; padding: 2px 8px; border-radius: 99px; cursor: pointer; align-items: center; gap: 4px;">
         <input type="checkbox" id="fuelChargeCheckbox" checked onchange="toggleFuelCharge()">
-        <span>⛽ รวม Fuel Charge (+3฿)</span>
+        <span>⛽ Fuel Charge (+3฿)</span>
       </label>
     </div>
 
     <div class="service-tabs">
       <button class="srv-tab active" id="tab_reg_doc" onclick="switchServiceTab('reg_doc')">
-        📮 ลงทะเบียน (19/22/24..)
+        📮 ลงทะเบียนเดิม
       </button>
       <button class="srv-tab" id="tab_reg_2568" onclick="switchServiceTab('reg_2568')">
-        📮 ลงทะเบียน (เรทใหม่)
-      </button>
-      <button class="srv-tab" id="tab_ems" onclick="switchServiceTab('ems')">
-        ⚡ EMS ในประเทศ
+        📮 ลงทะเบียน (ใหม่)
       </button>
       <button class="srv-tab" id="tab_ecopost" onclick="switchServiceTab('ecopost')">
         📦 eCo-Post
       </button>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-      <span style="font-size: 12px; font-weight: 700; color: #475569;">
-        จิ้มเรทที่มีในใบนำส่ง:
-      </span>
-      <button class="btn-sm" style="padding: 2px 7px; font-size: 11px;" onclick="unlockAllRates()">
-        🔓 ล้างค่าที่ล็อก
+      <button class="srv-tab" id="tab_ems" onclick="switchServiceTab('ems')">
+        ⚡ EMS (แยกเฉพาะ)
       </button>
     </div>
 
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+      <span style="font-size: 12px; font-weight: 700; color: #475569;" id="catalogSectionHint">
+        จิ้มเรทที่มีในใบนำส่ง (แตะซ้ำเพื่อลบออก):
+      </span>
+      <div style="display: flex; gap: 4px;">
+        <button class="btn-sm" style="padding: 2px 7px; font-size: 11px;" onclick="clearActiveSelectedRates()">
+          🧹 ล้างเรทที่เลือก
+        </button>
+        <button class="btn-sm" style="padding: 2px 7px; font-size: 11px;" onclick="unlockAllRates()">
+          🔓 ปลดล็อกค่า
+        </button>
+      </div>
+    </div>
+
+    <!-- ตารางเรทตามหมวด -->
     <div id="ratePresetGrid" class="rate-grid"></div>
 
     <!-- เพิ่มเรทเอง -->
     <div class="custom-rate-box">
       <span style="font-size: 12px; font-weight: 700;">+ เพิ่มเรท:</span>
       <input type="number" id="customRatePrice" inputmode="numeric" placeholder="ราคา (฿)" style="width: 78px;">
-      <input type="text" id="customRateLabel" placeholder="ชื่อเรท" style="flex: 1; min-width: 90px;">
+      <input type="text" id="customRateLabel" placeholder="ชื่อเรท (ระบุหรือไม่ก็ได้)" style="flex: 1; min-width: 90px;">
       <label style="font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 3px;">
         <input type="checkbox" id="customRateAR"> AR
       </label>
@@ -922,27 +1148,27 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 2: สรุปรันตามเรทราคา (แสดงข้อความครบ 100% + เพิ่มหมวดใหม่ได้เมื่อเหลือ) -->
+  <!-- ส่วนที่ 2: สรุปรันตามเรทราคา (แสดงเฉพาะเรทที่เลือก/แจงเท่านั้น)             -->
   <!-- ===================================================================== -->
   <div class="card">
     <div class="section-head">
       <div class="section-title">
         <span class="step-num">2</span>
-        <span>สรุปรันตามเรทราคา (แตะที่เรทเพื่อบันทึกยอด/เพิ่มหมวดเลข)</span>
+        <span>สรุปรันตามเรท (แตะแถวเพื่อลงเลขบาร์โค้ด)</span>
       </div>
       <div style="display: flex; gap: 5px;">
-        <button class="btn-sm" onclick="clearAllRecordedEntries()">🧹 ล้างยอดที่ลง</button>
-        <button class="btn-sm" onclick="copySummaryText()">📋 คัดลอก</button>
+        <button class="btn-sm success" onclick="promptSaveCurrentJob()">💾 บันทึกใบงาน</button>
+        <button class="btn-sm" onclick="copySummaryText()">📋 คัดลอกสรุป</button>
       </div>
     </div>
 
     <!-- แถบสรุปภาพรวม -->
     <div id="overallProgressBox" class="summary-banner"></div>
 
-    <!-- รายการเรทราคา -->
+    <!-- รายการเรทราคา (แสดงเฉพาะเรทที่เลือกหรือแจงได้เท่านั้น) -->
     <div id="rateSummaryList" class="summary-list"></div>
 
-    <!-- ปุ่มสลับรูปแบบคำตอบ -->
+    <!-- สลับชุดคำตอบ -->
     <div id="solutionNav" class="sol-nav" style="display: none;"></div>
 
     <!-- ข้อสังเกตกรณีไม่ลงตัว -->
@@ -950,21 +1176,56 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 3 (ซ่อนไว้ด้านล่างสุด): ตรวจสอบกับหน้าจอรับฝากทีละบรรทัด       -->
+  <!-- ส่วนที่ 3: ตรวจสอบกับหน้าจอรับฝาก (POS Verification Log)             -->
   <!-- ===================================================================== -->
   <div class="card" style="padding: 10px;">
     <button class="pos-check-toggle" onclick="togglePosLogSection()">
-      <span id="posLogToggleTitle">🖥️ ตรวจสอบกับหน้าจอรับฝาก (0 รายการที่บันทึก)</span>
+      <span id="posLogToggleTitle">🖥️ ตรวจสอบกับหน้าจอรับฝาก (0 รายการที่คีย์)</span>
       <span id="posLogToggleArrow">กดเพื่อแสดง ▾</span>
     </button>
     <div id="posLogContainer" style="display: none;">
       <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
-        <span>แสดงเรียงตามลำดับการกดบันทึก (บรรทัดที่ 1, 2, 3...) เพื่อเทียบกับหน้าจอรับฝาก</span>
+        <span>เรียงตามลำดับเวลาการกดบันทึก (บรรทัดที่ 1, 2, 3...) เพื่อเทียบหน้าจอรับฝาก</span>
+        <button class="btn-sm danger" style="padding: 2px 6px; font-size: 11px;" onclick="clearAllRecordedEntries()">ล้างรายการคีย์ทั้งหมด</button>
       </div>
       <div id="posLogList" class="pos-log-body"></div>
     </div>
   </div>
 
+</div>
+
+<!-- ===================================================================== -->
+<!-- BOTTOM STICKY BAR FOR MOBILE                                         -->
+<!-- ===================================================================== -->
+<div class="mobile-bottom-bar">
+  <div class="mobile-bottom-inner">
+    <button class="btn-mobile-act btn-mobile-save" onclick="promptSaveCurrentJob()">
+      💾 บันทึกใบงานนี้
+    </button>
+    <button class="btn-mobile-act btn-mobile-history" onclick="openHistoryModal()">
+      📜 ประวัติ (<span id="barHistoryCount">0</span>)
+    </button>
+    <button class="btn-mobile-act btn-mobile-copy" onclick="copySummaryText()">
+      📋 คัดลอก
+    </button>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- MODAL: ประวัติใบงานที่บันทึกไว้                                      -->
+<!-- ===================================================================== -->
+<div id="historyModal" class="modal-overlay" onclick="closeHistoryModalOnBackdrop(event)">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>📜 ประวัติใบงานที่บันทึกไว้</span>
+      </div>
+      <button class="modal-close-btn" onclick="closeHistoryModal()">✕</button>
+    </div>
+    <div class="modal-body" id="historyModalBody">
+      <!-- Generated by JS -->
+    </div>
+  </div>
 </div>
 
 <div id="toast" class="toast">ดำเนินการเรียบร้อย</div>
@@ -1007,85 +1268,112 @@
 
   const PRESET_GROUPS = {
     reg_doc: [
-      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false },
-      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false },
-      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'r29', price: 29, label: 'ลงทะเบียน พิกัด 3', isAR: false },
-      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false },
-      { id: 'r32ar', price: 32, label: '29 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'r33ar', price: 33, label: '30 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'r37', price: 37, label: 'ลงทะเบียน 37฿', isAR: false },
-      { id: 'r40ar', price: 40, label: '37 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'r62', price: 62, label: 'ลงทะเบียน 62฿', isAR: false },
-      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false }
+      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, mode: 'non_ems' },
+      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, mode: 'non_ems' },
+      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'r29', price: 29, label: 'ลงทะเบียน พิกัด 3', isAR: false, mode: 'non_ems' },
+      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, mode: 'non_ems' },
+      { id: 'r32ar', price: 32, label: '29 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'r33ar', price: 33, label: '30 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'r37', price: 37, label: 'ลงทะเบียน 37฿', isAR: false, mode: 'non_ems' },
+      { id: 'r40ar', price: 40, label: '37 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'r62', price: 62, label: 'ลงทะเบียน 62฿', isAR: false, mode: 'non_ems' },
+      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, mode: 'non_ems' }
     ],
     reg_2568: [
-      { id: 'n18', price: 18, label: 'ซอง ≤10g (5+13)', isAR: false },
-      { id: 'n21ar', price: 21, label: '18 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'n20', price: 20, label: 'ซอง ≤20g (7+13)', isAR: false },
-      { id: 'n23ar', price: 23, label: '20 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'n23', price: 23, label: 'ซอง ≤100g (10+13)', isAR: false },
-      { id: 'n26ar', price: 26, label: '23 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'n28', price: 28, label: 'ซอง ≤250g (15+13)', isAR: false },
-      { id: 'n31ar', price: 31, label: '28 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'n38', price: 38, label: 'ซอง ≤500g (25+13)', isAR: false },
-      { id: 'n41ar', price: 41, label: '38 + ตอบรับ AR 3฿', isAR: true },
-      { id: 'n48', price: 48, label: 'ซอง ≤1kg (35+13)', isAR: false },
-      { id: 'n68', price: 68, label: 'ซอง ≤2kg (55+13)', isAR: false }
-    ],
-    ems: [
-      { id: 'e32', basePrice: 32, price: 35, label: 'EMS ≤20g', isAR: false, hasFuel: true },
-      { id: 'e44_ar', basePrice: 44, price: 47, label: 'EMS ≤20g + AR 12฿', isAR: true, hasFuel: true },
-      { id: 'e37', basePrice: 37, price: 40, label: 'EMS ≤100g', isAR: false, hasFuel: true },
-      { id: 'e49_ar', basePrice: 49, price: 52, label: 'EMS ≤100g + AR 12฿', isAR: true, hasFuel: true },
-      { id: 'e42', basePrice: 42, price: 45, label: 'EMS ≤250g', isAR: false, hasFuel: true },
-      { id: 'e54_ar', basePrice: 54, price: 57, label: 'EMS ≤250g + AR 12฿', isAR: true, hasFuel: true },
-      { id: 'e52', basePrice: 52, price: 55, label: 'EMS ≤500g', isAR: false, hasFuel: true },
-      { id: 'e64_ar', basePrice: 64, price: 67, label: 'EMS ≤500g + AR 12฿', isAR: true, hasFuel: true },
-      { id: 'e67', basePrice: 67, price: 70, label: 'EMS ≤1kg', isAR: false, hasFuel: true },
-      { id: 'e79_ar', basePrice: 79, price: 82, label: 'EMS ≤1kg + AR 12฿', isAR: true, hasFuel: true },
-      { id: 'e82', basePrice: 82, price: 85, label: 'EMS ≤1.5kg', isAR: false, hasFuel: true },
-      { id: 'e94_ar', basePrice: 94, price: 97, label: 'EMS ≤1.5kg + AR 12฿', isAR: true, hasFuel: true },
-      { id: 'e97', basePrice: 97, price: 100, label: 'EMS ≤2kg', isAR: false, hasFuel: true },
-      { id: 'e109_ar', basePrice: 109, price: 112, label: 'EMS ≤2kg + AR 12฿', isAR: true, hasFuel: true },
-      { id: 'e112', basePrice: 112, price: 115, label: 'EMS ≤2.5kg', isAR: false, hasFuel: true },
-      { id: 'e127', basePrice: 127, price: 130, label: 'EMS ≤3kg', isAR: false, hasFuel: true }
+      { id: 'n18', price: 18, label: 'ซอง ≤10g (5+13)', isAR: false, mode: 'non_ems' },
+      { id: 'n21ar', price: 21, label: '18 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'n20', price: 20, label: 'ซอง ≤20g (7+13)', isAR: false, mode: 'non_ems' },
+      { id: 'n23ar', price: 23, label: '20 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'n23', price: 23, label: 'ซอง ≤100g (10+13)', isAR: false, mode: 'non_ems' },
+      { id: 'n26ar', price: 26, label: '23 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'n28', price: 28, label: 'ซอง ≤250g (15+13)', isAR: false, mode: 'non_ems' },
+      { id: 'n31ar', price: 31, label: '28 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'n38', price: 38, label: 'ซอง ≤500g (25+13)', isAR: false, mode: 'non_ems' },
+      { id: 'n41ar', price: 41, label: '38 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems' },
+      { id: 'n48', price: 48, label: 'ซอง ≤1kg (35+13)', isAR: false, mode: 'non_ems' },
+      { id: 'n68', price: 68, label: 'ซอง ≤2kg (55+13)', isAR: false, mode: 'non_ems' }
     ],
     ecopost: [
-      { id: 'eco20', basePrice: 20, price: 23, label: 'eCo-Post ≤20g', isAR: false, hasFuel: true },
-      { id: 'eco22', basePrice: 22, price: 25, label: 'eCo-Post ≤100g', isAR: false, hasFuel: true },
-      { id: 'eco26', basePrice: 26, price: 29, label: 'eCo-Post ≤250g', isAR: false, hasFuel: true },
-      { id: 'eco30', basePrice: 30, price: 33, label: 'eCo-Post ≤500g', isAR: false, hasFuel: true },
-      { id: 'eco40', basePrice: 40, price: 43, label: 'eCo-Post ≤1kg', isAR: false, hasFuel: true },
-      { id: 'eco60', basePrice: 60, price: 63, label: 'eCo-Post ≤2kg', isAR: false, hasFuel: true },
-      { id: 'eco80', basePrice: 80, price: 83, label: 'eCo-Post ≤4kg', isAR: false, hasFuel: true },
-      { id: 'eco120', basePrice: 120, price: 123, label: 'eCo-Post ≤6kg', isAR: false, hasFuel: true },
-      { id: 'eco160', basePrice: 160, price: 163, label: 'eCo-Post ≤10kg', isAR: false, hasFuel: true }
+      { id: 'eco20', basePrice: 20, price: 23, label: 'eCo-Post ≤20g', isAR: false, hasFuel: true, mode: 'non_ems' },
+      { id: 'eco22', basePrice: 22, price: 25, label: 'eCo-Post ≤100g', isAR: false, hasFuel: true, mode: 'non_ems' },
+      { id: 'eco26', basePrice: 26, price: 29, label: 'eCo-Post ≤250g', isAR: false, hasFuel: true, mode: 'non_ems' },
+      { id: 'eco30', basePrice: 30, price: 33, label: 'eCo-Post ≤500g', isAR: false, hasFuel: true, mode: 'non_ems' },
+      { id: 'eco40', basePrice: 40, price: 43, label: 'eCo-Post ≤1kg', isAR: false, hasFuel: true, mode: 'non_ems' },
+      { id: 'eco60', basePrice: 60, price: 63, label: 'eCo-Post ≤2kg', isAR: false, hasFuel: true, mode: 'non_ems' },
+      { id: 'eco80', basePrice: 80, price: 83, label: 'eCo-Post ≤4kg', isAR: false, hasFuel: true, mode: 'non_ems' },
+      { id: 'eco120', basePrice: 120, price: 123, label: 'eCo-Post ≤6kg', isAR: false, hasFuel: true, mode: 'non_ems' },
+      { id: 'eco160', basePrice: 160, price: 163, label: 'eCo-Post ≤10kg', isAR: false, hasFuel: true, mode: 'non_ems' }
+    ],
+    ems: [
+      { id: 'e32', basePrice: 32, price: 35, label: 'EMS ≤20g', isAR: false, hasFuel: true, mode: 'ems' },
+      { id: 'e44_ar', basePrice: 44, price: 47, label: 'EMS ≤20g + AR 12฿', isAR: true, hasFuel: true, mode: 'ems' },
+      { id: 'e37', basePrice: 37, price: 40, label: 'EMS ≤100g', isAR: false, hasFuel: true, mode: 'ems' },
+      { id: 'e49_ar', basePrice: 49, price: 52, label: 'EMS ≤100g + AR 12฿', isAR: true, hasFuel: true, mode: 'ems' },
+      { id: 'e42', basePrice: 42, price: 45, label: 'EMS ≤250g', isAR: false, hasFuel: true, mode: 'ems' },
+      { id: 'e54_ar', basePrice: 54, price: 57, label: 'EMS ≤250g + AR 12฿', isAR: true, hasFuel: true, mode: 'ems' },
+      { id: 'e52', basePrice: 52, price: 55, label: 'EMS ≤500g', isAR: false, hasFuel: true, mode: 'ems' },
+      { id: 'e64_ar', basePrice: 64, price: 67, label: 'EMS ≤500g + AR 12฿', isAR: true, hasFuel: true, mode: 'ems' },
+      { id: 'e67', basePrice: 67, price: 70, label: 'EMS ≤1kg', isAR: false, hasFuel: true, mode: 'ems' },
+      { id: 'e79_ar', basePrice: 79, price: 82, label: 'EMS ≤1kg + AR 12฿', isAR: true, hasFuel: true, mode: 'ems' },
+      { id: 'e82', basePrice: 82, price: 85, label: 'EMS ≤1.5kg', isAR: false, hasFuel: true, mode: 'ems' },
+      { id: 'e94_ar', basePrice: 94, price: 97, label: 'EMS ≤1.5kg + AR 12฿', isAR: true, hasFuel: true, mode: 'ems' },
+      { id: 'e97', basePrice: 97, price: 100, label: 'EMS ≤2kg', isAR: false, hasFuel: true, mode: 'ems' },
+      { id: 'e109_ar', basePrice: 109, price: 112, label: 'EMS ≤2kg + AR 12฿', isAR: true, hasFuel: true, mode: 'ems' },
+      { id: 'e112', basePrice: 112, price: 115, label: 'EMS ≤2.5kg', isAR: false, hasFuel: true, mode: 'ems' },
+      { id: 'e127', basePrice: 127, price: 130, label: 'EMS ≤3kg', isAR: false, hasFuel: true, mode: 'ems' }
     ]
   };
 
-  const STORAGE_KEY = 'POSTAL_MOBILE_MATCHER_V7';
+  const STORAGE_KEY = 'POSTAL_MOBILE_MATCHER_V8';
+  const HISTORY_KEY = 'POSTAL_JOBS_HISTORY_V1';
 
+  // State separated by service category:
+  // - EMS mode is completely independent (never mixes with non-ems).
+  // - Non-EMS modes (reg_doc, reg_2568, ecopost) can be combined together.
   let state = {
     currentPresetTab: 'reg_doc',
+    activeMode: 'non_ems', // 'ems' or 'non_ems'
     useFuelCharge: true,
     showPosLog: false,
     targetTotalQty: 361,
     targetTotalAmount: 8033,
     customRates: [],
-    selectedRates: [
-      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] }
-    ],
+    selectedRatesByMode: {
+      non_ems: [
+        { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+        { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+        { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+        { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+        { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
+        { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] }
+      ],
+      ems: []
+    },
     selectedSolutionIndex: 0
   };
 
   let currentSolutions = [];
+
+  function getActiveSelectedRates() {
+    if (!state.selectedRatesByMode) {
+      state.selectedRatesByMode = { non_ems: [], ems: [] };
+    }
+    const mode = state.activeMode || 'non_ems';
+    if (!Array.isArray(state.selectedRatesByMode[mode])) {
+      state.selectedRatesByMode[mode] = [];
+    }
+    return state.selectedRatesByMode[mode];
+  }
+
+  function setActiveSelectedRates(rates) {
+    if (!state.selectedRatesByMode) {
+      state.selectedRatesByMode = { non_ems: [], ems: [] };
+    }
+    const mode = state.activeMode || 'non_ems';
+    state.selectedRatesByMode[mode] = rates;
+  }
 
   function saveState() {
     try {
@@ -1100,25 +1388,53 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed && Array.isArray(parsed.selectedRates)) {
-          state = Object.assign({}, state, parsed);
-          state.selectedRates.forEach(r => {
-            if (!Array.isArray(r.entries)) r.entries = [];
-            if (!r.draftPrefix) r.draftPrefix = 'RJ';
-            if (r.draftStart8 === undefined) r.draftStart8 = '';
+        if (parsed) {
+          // If migrated from old format V7:
+          if (parsed.selectedRates && !parsed.selectedRatesByMode) {
+            state.selectedRatesByMode = {
+              non_ems: parsed.selectedRates.filter(r => !r.id.startsWith('e')),
+              ems: parsed.selectedRates.filter(r => r.id.startsWith('e'))
+            };
+          } else if (parsed.selectedRatesByMode) {
+            state.selectedRatesByMode = parsed.selectedRatesByMode;
+          }
+
+          if (parsed.currentPresetTab) state.currentPresetTab = parsed.currentPresetTab;
+          state.activeMode = state.currentPresetTab === 'ems' ? 'ems' : 'non_ems';
+          if (parsed.useFuelCharge !== undefined) state.useFuelCharge = parsed.useFuelCharge;
+          if (parsed.showPosLog !== undefined) state.showPosLog = parsed.showPosLog;
+          if (parsed.targetTotalQty !== undefined) state.targetTotalQty = parsed.targetTotalQty;
+          if (parsed.targetTotalAmount !== undefined) state.targetTotalAmount = parsed.targetTotalAmount;
+          if (Array.isArray(parsed.customRates)) state.customRates = parsed.customRates;
+          if (parsed.selectedSolutionIndex !== undefined) state.selectedSolutionIndex = parsed.selectedSolutionIndex;
+
+          ['non_ems', 'ems'].forEach(m => {
+            (state.selectedRatesByMode[m] || []).forEach(r => {
+              if (!Array.isArray(r.entries)) r.entries = [];
+              if (!r.draftPrefix) r.draftPrefix = m === 'ems' ? 'ED' : 'RJ';
+              if (r.draftStart8 === undefined) r.draftStart8 = '';
+            });
           });
         }
       }
     } catch (e) {}
+    updateHistoryCountBadge();
   }
 
-  function sortSelectedRatesByPrice() {
-    state.selectedRates.sort((a, b) => {
+  function sortRatesByPrice(ratesList) {
+    ratesList.sort((a, b) => {
       if (a.price !== b.price) return a.price - b.price;
       return (a.isAR ? 1 : 0) - (b.isAR ? 1 : 0);
     });
   }
 
+  function showSavedInfoToast() {
+    showToast(`💾 ข้อมูลทั้งหมดบันทึกในเครื่องอัตโนมัติแล้ว`);
+  }
+
+  /* ===================================================================== */
+  /* SOLVER ALGORITHM (FAST BACKTRACKING)                                  */
+  /* ===================================================================== */
   function solveRateDistribution(totalQty, totalAmount, selectedRates, allowZeroForFree = false) {
     const lockedRates = [];
     const freeRates = [];
@@ -1240,32 +1556,51 @@
     return { exactSolutions: solutions, remQty, remAmount, lockedQtySum, lockedAmountSum };
   }
 
+  /**
+   * ✨ แจงเรทอัตโนมัติ: ค้นหาชุดเรทที่ตรงกับยอดรวม โดย:
+   * - หากเป็น EMS จะค้นหาเฉพาะเรท EMS
+   * - หากเป็น Non-EMS จะค้นหาจากเรทที่อนุญาตในหมวดนั้น
+   * - ผลลัพธ์จะใส่เฉพาะเรทที่ลงตัวจริงเท่านั้น (ไม่ค้างเรทอื่น)
+   */
   function autoFindBestRatesForService() {
     const totalQty = parseInt(state.targetTotalQty, 10) || 0;
     const totalAmount = parseFloat(state.targetTotalAmount) || 0;
-    if (totalQty <= 0 || totalAmount <= 0) return;
+    if (totalQty <= 0 || totalAmount <= 0) {
+      showToast('กรุณากรอกจำนวนชิ้นและราคารวมก่อนครับ');
+      return;
+    }
 
-    const pool = [...(PRESET_GROUPS[state.currentPresetTab] || []), ...state.customRates];
+    let pool = [];
+    if (state.activeMode === 'ems') {
+      pool = [...(PRESET_GROUPS.ems || [])];
+    } else {
+      // Non-EMS: can combine current tab + custom rates
+      const tabPool = PRESET_GROUPS[state.currentPresetTab] || PRESET_GROUPS.reg_doc;
+      pool = [...tabPool, ...state.customRates.filter(r => r.mode !== 'ems')];
+    }
 
     for (let numRates = 1; numRates <= Math.min(5, pool.length); numRates++) {
       const foundCombo = findCombinationSolve(pool, numRates, totalQty, totalAmount);
       if (foundCombo) {
-        state.selectedRates = foundCombo.rates.map(r => ({
+        const winningMap = foundCombo.solution;
+        const winningRates = foundCombo.rates.filter(r => (winningMap[r.id] || 0) > 0).map(r => ({
           ...r,
           fixedQty: null,
           expanded: false,
-          draftPrefix: state.currentPresetTab === 'ems' ? 'ED' : 'RJ',
+          draftPrefix: state.activeMode === 'ems' ? 'ED' : 'RJ',
           draftStart8: '',
           entries: []
         }));
-        sortSelectedRatesByPrice();
+
+        setActiveSelectedRates(winningRates);
+        sortRatesByPrice(winningRates);
         state.selectedSolutionIndex = 0;
         updateAll();
-        showToast(`แจงเรทอัตโนมัติสำเร็จ (${foundCombo.rates.length} เรท ลงตัวพอดี)`);
+        showToast(`✨ แจงเรทอัตโนมัติสำเร็จ (${winningRates.length} เรทลงตัวพอดี)`);
         return;
       }
     }
-    showToast('ไม่พบชุดเรทในหมวดนี้ที่ลงตัวพอดี กรุณาดูข้อสังเกตด้านล่าง');
+    showToast('⚠️ ไม่พบชุดเรทในหมวดนี้ที่ลงตัวพอดี กรุณาดูข้อสังเกตด้านล่าง');
   }
 
   function findCombinationSolve(pool, k, totalQty, totalAmount) {
@@ -1298,10 +1633,19 @@
     return result;
   }
 
+  /* ===================================================================== */
+  /* RENDER UI COMPONENTS                                                 */
+  /* ===================================================================== */
   function renderPresetGrid(activeSolution = {}) {
     const grid = document.getElementById('ratePresetGrid');
-    const list = [...(PRESET_GROUPS[state.currentPresetTab] || []), ...state.customRates];
-    const selectedMap = new Map(state.selectedRates.map(r => [r.id, r]));
+    const currentTab = state.currentPresetTab;
+    const tabList = PRESET_GROUPS[currentTab] || [];
+    const activeSelected = getActiveSelectedRates();
+    const selectedMap = new Map(activeSelected.map(r => [r.id, r]));
+
+    // Include custom rates if matching current mode
+    const applicableCustom = state.customRates.filter(r => (r.mode || 'non_ems') === state.activeMode);
+    const list = [...tabList, ...applicableCustom];
 
     grid.innerHTML = list.map(item => {
       const selObj = selectedMap.get(item.id);
@@ -1329,7 +1673,8 @@
   }
 
   function renderMainSolver() {
-    sortSelectedRatesByPrice();
+    const activeSelected = getActiveSelectedRates();
+    sortRatesByPrice(activeSelected);
 
     const totalQty = parseInt(state.targetTotalQty, 10) || 0;
     const totalAmount = parseFloat(state.targetTotalAmount) || 0;
@@ -1339,9 +1684,9 @@
       avgEl.textContent = totalQty > 0 ? `เฉลี่ย ${(totalAmount / totalQty).toFixed(2)} ฿/ชิ้น` : '';
     }
 
-    let solveResult = solveRateDistribution(totalQty, totalAmount, state.selectedRates, false);
-    if (solveResult.exactSolutions.length === 0 && state.selectedRates.length > 1) {
-      solveResult = solveRateDistribution(totalQty, totalAmount, state.selectedRates, true);
+    let solveResult = solveRateDistribution(totalQty, totalAmount, activeSelected, false);
+    if (solveResult.exactSolutions.length === 0 && activeSelected.length > 1) {
+      solveResult = solveRateDistribution(totalQty, totalAmount, activeSelected, true);
     }
 
     currentSolutions = solveResult.exactSolutions;
@@ -1357,8 +1702,12 @@
     const solNav = document.getElementById('solutionNav');
     const diagArea = document.getElementById('diagnosticsArea');
 
-    if (state.selectedRates.length === 0) {
-      overallBox.innerHTML = `<div style="text-align:center; color: var(--warning); font-weight:700;">👆 กรุณาจิ้มเลือกเรทราคาด้านบน หรือกด "✨ แจงเรทอัตโนมัติ"</div>`;
+    if (activeSelected.length === 0) {
+      overallBox.innerHTML = `
+        <div style="text-align:center; color: var(--warning); font-weight:700; padding: 6px 0;">
+          👆 กรุณาจิ้มเลือกเรทราคาด้านบน หรือกดปุ่ม <b>"✨ แจงเรทอัตโนมัติ"</b>
+        </div>
+      `;
       summaryList.innerHTML = '';
       solNav.style.display = 'none';
       diagArea.innerHTML = '';
@@ -1372,7 +1721,7 @@
     let activeRateCount = 0;
     let completedRatesCount = 0;
 
-    summaryList.innerHTML = state.selectedRates.map((r, idx) => {
+    summaryList.innerHTML = activeSelected.map((r, idx) => {
       const isLocked = r.fixedQty !== null && r.fixedQty !== '' && !isNaN(r.fixedQty);
       const targetQ = activeSolution[r.id] !== undefined
         ? activeSolution[r.id]
@@ -1391,21 +1740,22 @@
       const remainQ = targetQ - recordedQ;
       const pct = targetQ > 0 ? Math.min(100, Math.round((recordedQ / targetQ) * 100)) : 0;
 
-      // Full Status Message (Never truncated!)
       let stateCls = '';
       let statusLine = '';
       let barColor = 'transparent';
-      let actionBtnLabel = 'ลงเลขที่ ▾';
+      let actionBtnLabel = '📝 ลงเลขพัสดุ ▾';
 
       if (targetQ === 0 && recordedQ === 0) {
-        statusLine = `⚪ 0 ชิ้น`;
+        stateCls = '';
+        statusLine = `⚪ 0 ชิ้น (แตะเพื่อเอาออก)`;
+        actionBtnLabel = 'ลบออก ✕';
       } else if (recordedQ === 0) {
         statusLine = `⚪ ยังไม่ลง • ต้องลง <b>${targetQ.toLocaleString()} ชิ้น</b>`;
       } else if (recordedQ < targetQ) {
         stateCls = 'st-partial';
         statusLine = `🟡 ลงแล้ว <b>${recordedQ.toLocaleString()} ชิ้น</b> • เหลืออีก <b>${remainQ.toLocaleString()} ชิ้น</b>`;
         barColor = '#f59e0b';
-        actionBtnLabel = `+ เพิ่มหมวด (เหลือ ${remainQ}) ▾`;
+        actionBtnLabel = `+ เพิ่มชุด (เหลือ ${remainQ}) ▾`;
       } else if (recordedQ === targetQ) {
         stateCls = 'st-done';
         statusLine = `✅ ลงครบแล้วทั้ง <b>${recordedQ.toLocaleString()} ชิ้น</b>`;
@@ -1419,7 +1769,12 @@
         actionBtnLabel = 'เกิน! ▾';
       }
 
-      // Expanded Drawer
+      // Quick prefix chips according to service mode
+      const prefixChips = state.activeMode === 'ems'
+        ? ['ED', 'EJ', 'EW']
+        : ['RJ', 'RB', 'RC', 'LP'];
+
+      // Drawer for recording barcodes
       let drawerHtml = '';
       if (r.expanded) {
         const defaultInputQty = remainQ > 0 ? remainQ : 1;
@@ -1455,37 +1810,36 @@
           `;
         }).join('');
 
-        // Show form to add first batch OR add new prefix batch when remaining > 0
         let addFormHtml = '';
         if (remainQ > 0) {
           const formHeading = entries.length === 0
-            ? `➕ บันทึกการลงข้อมูล (ต้องลง ${remainQ} ชิ้น)`
-            : `➕ เพิ่มหมวดเลขใหม่ / ลงส่วนที่เหลืออีก ${remainQ} ชิ้น (ชุดที่ ${entries.length + 1})`;
+            ? `➕ บันทึกข้อมูลบาร์โค้ด (ต้องลง ${remainQ} ชิ้น)`
+            : `➕ เพิ่มชุดใหม่ / ลงส่วนที่เหลืออีก ${remainQ} ชิ้น`;
 
           addFormHtml = `
             <div class="add-batch-panel">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
                 <span style="font-size:12.5px; font-weight:800; color:#1e40af;">${formHeading}</span>
                 <button class="btn-sm success" style="padding:3px 8px; font-size:11.5px;" onclick="quickMarkComplete(${idx}, ${remainQ})">
-                  ✅ กดลงครบ ${remainQ} ชิ้นที่เหลือทันที
+                  ✅ ลงครบ ${remainQ} ชิ้นทันที
                 </button>
               </div>
 
               <div class="drawer-form">
                 <div>
-                  <label>จำนวน (ไม่เกิน ${remainQ})</label>
+                  <label>จำนวนชิ้น</label>
                   <input type="number" id="entryQty_${idx}" inputmode="numeric" min="1" max="${remainQ}" value="${defaultInputQty}"
                     oninput="onDraftQtyInput(${idx}, this, ${remainQ})">
                 </div>
                 <div>
                   <label>หมวด</label>
                   <input type="text" id="entryPrefix_${idx}" maxlength="2" style="text-transform:uppercase; text-align:center;"
-                    value="${r.draftPrefix || 'RJ'}"
-                    oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2); state.selectedRates[${idx}].draftPrefix = this.value; updateLiveBcPreview(${idx}); saveState();">
+                    value="${r.draftPrefix || (state.activeMode === 'ems' ? 'ED' : 'RJ')}"
+                    oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2); activeSelected[${idx}].draftPrefix = this.value; updateLiveBcPreview(${idx}); saveState();">
                 </div>
                 <div>
                   <label>เลขต้น 8 หลัก (<span id="digitCount_${idx}">${(r.draftStart8 || '').length}</span>/8)</label>
-                  <input type="text" id="entryStart8_${idx}" inputmode="numeric" maxlength="8" placeholder="กรอก 8 หลัก"
+                  <input type="text" id="entryStart8_${idx}" inputmode="numeric" maxlength="8" placeholder="กรอกเลขต้น 8 หลัก"
                     value="${r.draftStart8 || ''}"
                     oninput="onDraftStartInput(${idx}, this)">
                 </div>
@@ -1496,13 +1850,11 @@
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
                 <div style="display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
                   <span style="font-size:11px; color:var(--text-muted);">เลือกหมวด:</span>
-                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RJ')">RJ</button>
-                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RB')">RB</button>
-                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'RC')">RC</button>
-                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'ED')">ED</button>
-                  <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, 'EJ')">EJ</button>
+                  ${prefixChips.map(pfx => `
+                    <button class="btn-sm" style="padding:2px 7px; font-size:11px;" onclick="setDraftPrefix(${idx}, '${pfx}')">${pfx}</button>
+                  `).join('')}
                 </div>
-                <button class="btn-sm primary" onclick="addRateEntry(${idx})">
+                <button class="btn-sm primary" style="padding:6px 14px; font-size:13px; font-weight:800;" onclick="addRateEntry(${idx})">
                   💾 บันทึกชุดนี้
                 </button>
               </div>
@@ -1510,8 +1862,8 @@
           `;
         } else {
           addFormHtml = `
-            <div style="text-align:center; padding:6px; background:#dcfce7; color:#166534; border-radius:8px; font-size:12.5px; font-weight:700;">
-              🎉 เรท ${r.price}฿ ลงครบตามจำนวน ${targetQ} ชิ้นแล้ว (หากต้องการแก้ไข กดลบชุดด้านบนได้ครับ)
+            <div style="text-align:center; padding:8px; background:#dcfce7; color:#166534; border-radius:8px; font-size:13px; font-weight:700;">
+              🎉 เรท ${r.price}฿ ลงครบตามยอด ${targetQ} ชิ้นแล้ว
             </div>
           `;
         }
@@ -1530,7 +1882,8 @@
             <div class="s-line-top">
               <div class="s-rate-group">
                 <span class="s-price-box">เรท ${r.price} ฿</span>
-                ${r.isAR ? '<span class="badge-ar" style="font-size:11px; padding:1px 6px;">AR ตอบรับ</span>' : ''}
+                ${r.isAR ? '<span class="badge-ar" style="font-size:11px; padding:1px 6px;">AR</span>' : ''}
+                <span style="font-size:12px; color:var(--text-muted);">${r.label}</span>
                 ${isLocked ? `<span style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; padding:1px 6px; border-radius:4px;" onclick="event.stopPropagation(); updateRateFixedQty(${idx}, '')">🔒 ล็อก (แตะปลด)</span>` : ''}
               </div>
               <div class="s-amount-text">เป็นเงิน ${subAmt.toLocaleString()} ฿</div>
@@ -1539,7 +1892,7 @@
             <div class="s-line-bottom">
               <div class="s-status-pill">${statusLine}</div>
               <div class="s-right" onclick="event.stopPropagation()">
-                <div class="qty-stepper" title="ปรับจำนวนชิ้นของเรทนี้">
+                <div class="qty-stepper" title="ปรับจำนวนชิ้น">
                   <button onclick="stepRateQty(${idx}, ${targetQ}, -1)">−</button>
                   <input type="number" inputmode="numeric" min="0"
                     class="${isLocked ? 'locked' : ''}"
@@ -1559,7 +1912,7 @@
       `;
     }).join('');
 
-    // Render Top Summary Banner
+    // Render Overall Banner
     const overallRemain = Math.max(0, sumSolvedQty - grandRecordedQty);
     const isExactMatch = currentSolutions.length > 0 && sumSolvedQty === totalQty && sumSolvedAmt === totalAmount;
 
@@ -1567,14 +1920,14 @@
       <div class="sb-top">
         <span class="sb-match-tag" style="color: ${isExactMatch ? 'var(--success)' : 'var(--warning)'};">
           ${isExactMatch
-            ? `✅ รวม ${sumSolvedQty.toLocaleString()} ชิ้น = ${sumSolvedAmt.toLocaleString()} บาท (ตรงตามยอดรวม)`
-            : `⚠️ ยอดรวมเรท: ${sumSolvedQty.toLocaleString()} ชิ้น = ${sumSolvedAmt.toLocaleString()} ฿ (เป้า ${totalQty} ชิ้น / ${totalAmount.toLocaleString()} ฿)`
+            ? `✅ ยอดรวมตรงพอดี: ${sumSolvedQty.toLocaleString()} ชิ้น = ${sumSolvedAmt.toLocaleString()} บาท`
+            : `⚠️ เรทที่เลือก: ${sumSolvedQty.toLocaleString()} ชิ้น = ${sumSolvedAmt.toLocaleString()} ฿ (เป้า ${totalQty} ชิ้น / ${totalAmount.toLocaleString()} ฿)`
           }
         </span>
       </div>
       <div class="sb-pills">
         <div class="sb-pill" style="background: #eff6ff; color: #1d4ed8;">
-          <span class="lbl">คีย์ลงแล้ว</span>
+          <span class="lbl">ลงข้อมูลแล้ว</span>
           <span class="val">${grandRecordedQty.toLocaleString()} ชิ้น</span>
         </div>
         <div class="sb-pill" style="background: #fffbeb; color: #b45309;">
@@ -1582,7 +1935,7 @@
           <span class="val">${overallRemain.toLocaleString()} ชิ้น</span>
         </div>
         <div class="sb-pill" style="background: #f0fdf4; color: #15803d;">
-          <span class="lbl">เรทที่ครบแล้ว</span>
+          <span class="lbl">เรทที่ครบ</span>
           <span class="val">${completedRatesCount} / ${activeRateCount} เรท</span>
         </div>
       </div>
@@ -1594,7 +1947,7 @@
         solNav.style.display = 'flex';
         solNav.innerHTML = `
           <span style="font-size: 12px; font-weight: 700; color: #166534;">
-            รูปแบบตัวเลขที่ ${state.selectedSolutionIndex + 1}/${currentSolutions.length}
+            รูปแบบการกระจายที่ ${state.selectedSolutionIndex + 1}/${currentSolutions.length}
           </span>
           <div style="display:flex; gap:5px;">
             <button class="btn-sm" onclick="changeSolution(-1)">◀ ก่อนหน้า</button>
@@ -1606,7 +1959,7 @@
       }
     } else {
       solNav.style.display = 'none';
-      const diags = buildDiagnostics(totalQty, totalAmount, state.selectedRates);
+      const diags = buildDiagnostics(totalQty, totalAmount, activeSelected);
       diagArea.innerHTML = diags.map(d => `
         <div class="diag-box">
           <span>${d.text}</span>
@@ -1618,13 +1971,10 @@
     renderPosVerificationLog();
   }
 
-  /**
-   * ส่วนที่ 3 (ด้านล่างสุด ซ่อน/เปิดได้): แสดงรายการบันทึกเรียงตามลำดับการคีย์ (บรรทัดที่ 1, 2, 3...)
-   * เพื่อใช้ตรวจสอบเทียบกับหน้าจอรับฝาก (POS)
-   */
   function renderPosVerificationLog() {
+    const activeSelected = getActiveSelectedRates();
     const allLogs = [];
-    state.selectedRates.forEach((r, rIdx) => {
+    activeSelected.forEach((r, rIdx) => {
       (r.entries || []).forEach((ent, eIdx) => {
         allLogs.push({
           rateIdx: rIdx,
@@ -1640,7 +1990,6 @@
       });
     });
 
-    // เรียงตามลำดับเวลาที่กดบันทึกจริง (บรรทัดที่ 1, 2, 3... บนหน้าจอรับฝาก)
     allLogs.sort((a, b) => a.timestamp - b.timestamp);
 
     const titleEl = document.getElementById('posLogToggleTitle');
@@ -1656,7 +2005,7 @@
     containerEl.style.display = state.showPosLog ? 'block' : 'none';
 
     if (allLogs.length === 0) {
-      listEl.innerHTML = `<div style="text-align:center; padding:12px; color:var(--text-muted); font-size:13px;">ยังไม่มีรายการที่กดบันทึก (เมื่อคุณกด "+ บันทึกชุดนี้" ในแต่ละเรท รายการจะมาเรียงบรรทัดที่ 1, 2, 3... ที่นี่เพื่อเทียบกับหน้าจอรับฝาก)</div>`;
+      listEl.innerHTML = `<div style="text-align:center; padding:12px; color:var(--text-muted); font-size:13px;">ยังไม่มีรายการที่กดบันทึก (เมื่อคุณกด "+ บันทึกชุดนี้" ในแต่ละเรท รายการจะมาเรียงลำดับที่ 1, 2, 3... ที่นี่เพื่อเทียบกับหน้าจอรับฝาก)</div>`;
       return;
     }
 
@@ -1696,15 +2045,17 @@
     renderPosVerificationLog();
   }
 
-  function buildDiagnostics(totalQty, totalAmount, selectedRates) {
+  function buildDiagnostics(totalQty, totalAmount, activeSelected) {
     const list = [];
-    const catalog = [...(PRESET_GROUPS[state.currentPresetTab] || []), ...state.customRates];
-    const existingPrices = new Set(selectedRates.map(r => r.price));
+    const pool = state.activeMode === 'ems'
+      ? PRESET_GROUPS.ems
+      : [...(PRESET_GROUPS[state.currentPresetTab] || []), ...state.customRates];
+    const existingPrices = new Set(activeSelected.map(r => r.price));
 
-    for (const cand of catalog) {
+    for (const cand of pool) {
       if (existingPrices.has(cand.price)) continue;
       for (let q = 1; q <= 10; q++) {
-        const testRates = [...selectedRates, { ...cand, fixedQty: q }];
+        const testRates = [...activeSelected, { ...cand, fixedQty: q }];
         const res = solveRateDistribution(totalQty, totalAmount, testRates, false);
         if (res.exactSolutions.length > 0) {
           list.push({
@@ -1722,7 +2073,7 @@
       for (const s of [-1, 1]) {
         const testAmt = totalAmount + d * s;
         if (testAmt <= 0) continue;
-        const res = solveRateDistribution(totalQty, testAmt, selectedRates, false);
+        const res = solveRateDistribution(totalQty, testAmt, activeSelected, false);
         if (res.exactSolutions.length > 0) {
           const msg = s > 0 ? `บวกขาด ${d}฿` : `บวกเกิน ${d}฿`;
           list.push({
@@ -1752,16 +2103,43 @@
     renderMainSolver();
   }
 
+  /**
+   * สลับแท็บบริการ:
+   * - EMS จะถูกแยกเด็ดขาด ไม่ปนกับบริการอื่น
+   * - บริการทั่วไป (ลงทะเบียนเดิม, ใหม่, eCo-Post) สามารถรวมกันได้
+   */
   function switchServiceTab(tabKey) {
     state.currentPresetTab = tabKey;
-    ['reg_doc', 'reg_2568', 'ems', 'ecopost'].forEach(k => {
+    const isEms = tabKey === 'ems';
+    state.activeMode = isEms ? 'ems' : 'non_ems';
+
+    ['reg_doc', 'reg_2568', 'ecopost', 'ems'].forEach(k => {
       const btn = document.getElementById('tab_' + k);
-      if (btn) btn.className = k === tabKey ? 'srv-tab active' : 'srv-tab';
+      if (btn) {
+        if (k === tabKey) {
+          btn.className = isEms ? 'srv-tab active ems-tab' : 'srv-tab active';
+        } else {
+          btn.className = 'srv-tab';
+        }
+      }
     });
+
+    // Update notice banner
+    const noticeEl = document.getElementById('serviceModeNotice');
+    const noticeText = document.getElementById('serviceModeText');
     const fuelWrap = document.getElementById('fuelChargeToggleWrap');
-    if (fuelWrap) {
-      fuelWrap.style.display = (tabKey === 'ems' || tabKey === 'ecopost') ? 'inline-flex' : 'none';
+
+    if (isEms) {
+      noticeEl.className = 'service-category-badge ems-mode';
+      noticeText.textContent = '⚡ หมวด EMS ในประเทศ (แยกบริการเฉพาะ ไม่ปนกับหมวดอื่น)';
+      if (fuelWrap) fuelWrap.style.display = 'inline-flex';
+    } else {
+      noticeEl.className = 'service-category-badge non-ems-mode';
+      noticeText.textContent = '📮 หมวดไปรษณียภัณฑ์ & พัสดุ (สามารถรวมเรทลงทะเบียน/eCo-Post ด้วยกันได้)';
+      if (fuelWrap) fuelWrap.style.display = (tabKey === 'ecopost') ? 'inline-flex' : 'none';
     }
+
+    state.selectedSolutionIndex = 0;
     saveState();
     renderMainSolver();
   }
@@ -1779,7 +2157,8 @@
       });
     });
 
-    state.selectedRates.forEach(r => {
+    const activeSelected = getActiveSelectedRates();
+    activeSelected.forEach(r => {
       const tpl = findCatalogRateById(r.id);
       if (tpl && tpl.hasFuel && tpl.basePrice !== undefined) {
         r.price = tpl.basePrice + surcharge;
@@ -1799,42 +2178,52 @@
   }
 
   function toggleSelectRate(rateId) {
-    const idx = state.selectedRates.findIndex(r => r.id === rateId);
+    const activeSelected = getActiveSelectedRates();
+    const idx = activeSelected.findIndex(r => r.id === rateId);
     if (idx >= 0) {
-      state.selectedRates.splice(idx, 1);
+      activeSelected.splice(idx, 1);
     } else {
       const tpl = findCatalogRateById(rateId);
       if (tpl) {
-        state.selectedRates.push({
+        const defaultPfx = state.activeMode === 'ems' ? 'ED' : (state.currentPresetTab === 'ecopost' ? 'LP' : 'RJ');
+        activeSelected.push({
           ...tpl,
           fixedQty: null,
           expanded: false,
-          draftPrefix: state.currentPresetTab === 'ems' ? 'ED' : 'RJ',
+          draftPrefix: defaultPfx,
           draftStart8: '',
           entries: []
         });
       }
     }
-    sortSelectedRatesByPrice();
+    sortRatesByPrice(activeSelected);
     state.selectedSolutionIndex = 0;
     updateAll();
   }
 
+  function clearActiveSelectedRates() {
+    setActiveSelectedRates([]);
+    state.selectedSolutionIndex = 0;
+    updateAll();
+    showToast('ล้างเรทที่เลือกในหมวดนี้แล้ว');
+  }
+
   function toggleExpandRate(idx) {
-    if (!state.selectedRates[idx]) return;
-    state.selectedRates[idx].expanded = !state.selectedRates[idx].expanded;
+    const activeSelected = getActiveSelectedRates();
+    if (!activeSelected[idx]) return;
+    activeSelected[idx].expanded = !activeSelected[idx].expanded;
     updateAll();
   }
 
   function setDraftPrefix(idx, prefix) {
-    if (!state.selectedRates[idx]) return;
-    const prevPrefix = state.selectedRates[idx].draftPrefix;
-    state.selectedRates[idx].draftPrefix = prefix;
+    const activeSelected = getActiveSelectedRates();
+    if (!activeSelected[idx]) return;
+    const prevPrefix = activeSelected[idx].draftPrefix;
+    activeSelected[idx].draftPrefix = prefix;
     const pEl = document.getElementById('entryPrefix_' + idx);
     if (pEl) pEl.value = prefix;
-    // If user switches to a different prefix (e.g. from RB to RJ), clear the auto-advanced number so they can type the new prefix's starting 8 digits
     if (prevPrefix !== prefix) {
-      state.selectedRates[idx].draftStart8 = '';
+      activeSelected[idx].draftStart8 = '';
       const sEl = document.getElementById('entryStart8_' + idx);
       if (sEl) sEl.value = '';
       const cntEl = document.getElementById('digitCount_' + idx);
@@ -1849,17 +2238,18 @@
     if (val > maxRemain) {
       val = maxRemain;
       inputEl.value = maxRemain;
-      showToast(`ล็อกจำนวนสูงสุดตามที่เหลือ (${maxRemain} ชิ้น)`);
+      showToast(`จำนวนสูงสุดคือ ${maxRemain} ชิ้น`);
     }
     updateLiveBcPreview(idx);
   }
 
   function onDraftStartInput(idx, inputEl) {
-    if (!state.selectedRates[idx]) return;
+    const activeSelected = getActiveSelectedRates();
+    if (!activeSelected[idx]) return;
     const rawVal = inputEl.value || '';
-    const parsed = parseSmartBarcodeInput(rawVal, state.selectedRates[idx].draftPrefix || 'RJ');
-    state.selectedRates[idx].draftPrefix = parsed.prefix;
-    state.selectedRates[idx].draftStart8 = parsed.start8;
+    const parsed = parseSmartBarcodeInput(rawVal, activeSelected[idx].draftPrefix || 'RJ');
+    activeSelected[idx].draftPrefix = parsed.prefix;
+    activeSelected[idx].draftStart8 = parsed.start8;
 
     inputEl.value = parsed.start8;
 
@@ -1874,16 +2264,17 @@
   }
 
   function updateLiveBcPreview(idx) {
+    const activeSelected = getActiveSelectedRates();
     const previewEl = document.getElementById('liveBcPreview_' + idx);
-    if (!previewEl || !state.selectedRates[idx]) return;
+    if (!previewEl || !activeSelected[idx]) return;
 
     const qEl = document.getElementById('entryQty_' + idx);
     const pEl = document.getElementById('entryPrefix_' + idx);
     const sEl = document.getElementById('entryStart8_' + idx);
 
     const qty = Math.max(1, parseInt(qEl ? qEl.value : 1, 10) || 1);
-    const prefix = (pEl ? pEl.value : state.selectedRates[idx].draftPrefix || 'RJ').toUpperCase();
-    const clean8 = String(sEl ? sEl.value : state.selectedRates[idx].draftStart8 || '').replace(/\D/g, '').slice(0, 8);
+    const prefix = (pEl ? pEl.value : activeSelected[idx].draftPrefix || 'RJ').toUpperCase();
+    const clean8 = String(sEl ? sEl.value : activeSelected[idx].draftStart8 || '').replace(/\D/g, '').slice(0, 8);
 
     if (clean8.length === 8) {
       const sNum = parseInt(clean8, 10);
@@ -1892,7 +2283,7 @@
       const eObj = formatThaiBarcode(prefix, eNum, 'TH');
       previewEl.innerHTML = `
         <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:6px 9px; border-radius:7px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px;">
-          <span style="font-weight:700; color:#1e40af;">ตัวอย่าง (${qty} ชิ้น):</span>
+          <span style="font-weight:700; color:#1e40af;">ช่วงเลขบาร์โค้ด (${qty} ชิ้น):</span>
           <span style="font-family:monospace; font-weight:800; color:#0f172a;">
             ${sObj.prefix} ${sObj.str8.slice(0,4)} ${sObj.str8.slice(4,8)} <span class="cd-red">${sObj.cd}</span> TH
             ถึง
@@ -1901,14 +2292,15 @@
         </div>
       `;
     } else if (clean8.length > 0) {
-      previewEl.innerHTML = `<span style="color:#b45309; font-weight:600;">กำลังพิมพ์เลขต้น... (${clean8.length}/8 หลัก)</span>`;
+      previewEl.innerHTML = `<span style="color:#b45309; font-weight:600;">กำลังกรอกเลขต้น... (${clean8.length}/8 หลัก)</span>`;
     } else {
       previewEl.innerHTML = '';
     }
   }
 
   function addRateEntry(idx) {
-    const r = state.selectedRates[idx];
+    const activeSelected = getActiveSelectedRates();
+    const r = activeSelected[idx];
     if (!r) return;
     const qEl = document.getElementById('entryQty_' + idx);
     const pEl = document.getElementById('entryPrefix_' + idx);
@@ -1916,11 +2308,12 @@
 
     const qty = parseInt(qEl ? qEl.value : 0, 10) || 0;
     if (qty <= 0) {
-      showToast('กรุณาระบุจำนวนชิ้นที่ลง');
+      showToast('กรุณาระบุจำนวนชิ้น');
       return;
     }
 
-    const prefix = (pEl ? pEl.value : r.draftPrefix || 'RJ').toUpperCase().trim();
+    const defaultPfx = state.activeMode === 'ems' ? 'ED' : 'RJ';
+    const prefix = (pEl ? pEl.value : r.draftPrefix || defaultPfx).toUpperCase().trim();
     const clean8 = String(sEl ? sEl.value : r.draftStart8 || '').replace(/\D/g, '');
 
     if (clean8.length > 0 && clean8.length !== 8) {
@@ -1944,15 +2337,17 @@
     }
 
     updateAll();
-    showToast(`บันทึกเรท ${r.price}฿ จำนวน ${qty} ชิ้น (${(qty * r.price).toLocaleString()}฿) แล้ว`);
+    showToast(`💾 บันทึกเรท ${r.price}฿ จำนวน ${qty} ชิ้น เรียบร้อย`);
   }
 
   function quickMarkComplete(idx, remainQty) {
-    const r = state.selectedRates[idx];
+    const activeSelected = getActiveSelectedRates();
+    const r = activeSelected[idx];
     if (!r || remainQty <= 0) return;
     const pEl = document.getElementById('entryPrefix_' + idx);
     const sEl = document.getElementById('entryStart8_' + idx);
-    const prefix = (pEl ? pEl.value : r.draftPrefix || 'RJ').toUpperCase().trim();
+    const defaultPfx = state.activeMode === 'ems' ? 'ED' : 'RJ';
+    const prefix = (pEl ? pEl.value : r.draftPrefix || defaultPfx).toUpperCase().trim();
     const clean8 = String(sEl ? sEl.value : r.draftStart8 || '').replace(/\D/g, '');
 
     if (!Array.isArray(r.entries)) r.entries = [];
@@ -1969,35 +2364,41 @@
   }
 
   function removeRateEntry(idx, eIdx) {
-    const r = state.selectedRates[idx];
+    const activeSelected = getActiveSelectedRates();
+    const r = activeSelected[idx];
     if (!r || !Array.isArray(r.entries)) return;
     r.entries.splice(eIdx, 1);
     updateAll();
+    showToast('ลบชุดรายการแล้ว');
   }
 
   function clearAllRecordedEntries() {
-    state.selectedRates.forEach(r => {
+    if (!confirm('ต้องการล้างรายการบาร์โค้ดที่คีย์ทั้งหมดในหมวดนี้หรือไม่?')) return;
+    const activeSelected = getActiveSelectedRates();
+    activeSelected.forEach(r => {
       r.entries = [];
       r.draftStart8 = '';
     });
     updateAll();
-    showToast('ล้างยอดที่ลงแล้วทั้งหมด');
+    showToast('ล้างรายการคีย์ทั้งหมดแล้ว');
   }
 
   function stepRateQty(idx, currentSolvedQty, delta) {
-    if (!state.selectedRates[idx]) return;
+    const activeSelected = getActiveSelectedRates();
+    if (!activeSelected[idx]) return;
     const nextVal = Math.max(0, (parseInt(currentSolvedQty, 10) || 0) + delta);
-    state.selectedRates[idx].fixedQty = nextVal;
+    activeSelected[idx].fixedQty = nextVal;
     state.selectedSolutionIndex = 0;
     updateAll();
   }
 
   function updateRateFixedQty(idx, val) {
-    if (!state.selectedRates[idx]) return;
+    const activeSelected = getActiveSelectedRates();
+    if (!activeSelected[idx]) return;
     if (val === '' || val === null) {
-      state.selectedRates[idx].fixedQty = null;
+      activeSelected[idx].fixedQty = null;
     } else {
-      state.selectedRates[idx].fixedQty = Math.max(0, parseInt(val, 10) || 0);
+      activeSelected[idx].fixedQty = Math.max(0, parseInt(val, 10) || 0);
     }
     state.selectedSolutionIndex = 0;
     saveState();
@@ -2005,7 +2406,8 @@
   }
 
   function unlockAllRates() {
-    state.selectedRates.forEach(r => { r.fixedQty = null; });
+    const activeSelected = getActiveSelectedRates();
+    activeSelected.forEach(r => { r.fixedQty = null; });
     state.selectedSolutionIndex = 0;
     updateAll();
     showToast('ปลดล็อกให้คำนวณออโต้แล้ว');
@@ -2031,38 +2433,43 @@
       id: 'cust_' + Date.now(),
       price,
       label: lEl.value.trim() || `เรท ${price}฿`,
-      isAR: arEl.checked
+      isAR: arEl.checked,
+      mode: state.activeMode
     };
     state.customRates.push(newRate);
-    state.selectedRates.push({
+    const activeSelected = getActiveSelectedRates();
+    activeSelected.push({
       ...newRate,
       fixedQty: null,
       expanded: false,
-      draftPrefix: 'RJ',
+      draftPrefix: state.activeMode === 'ems' ? 'ED' : 'RJ',
       draftStart8: '',
       entries: []
     });
-    sortSelectedRatesByPrice();
+    sortRatesByPrice(activeSelected);
     pEl.value = '';
     lEl.value = '';
     arEl.checked = false;
     updateAll();
+    showToast(`เพิ่มเรท ${price}฿ เรียบร้อย`);
   }
 
   function addSuggestedRate(id, price, label, isAR, fixedQty) {
-    const existing = state.selectedRates.find(r => r.id === id || (r.price === price && r.isAR === isAR));
+    const activeSelected = getActiveSelectedRates();
+    const existing = activeSelected.find(r => r.id === id || (r.price === price && r.isAR === isAR));
     if (existing) {
       existing.fixedQty = fixedQty;
     } else {
-      state.selectedRates.push({
+      activeSelected.push({
         id, price, label, isAR, fixedQty,
+        mode: state.activeMode,
         expanded: false,
-        draftPrefix: 'RJ',
+        draftPrefix: state.activeMode === 'ems' ? 'ED' : 'RJ',
         draftStart8: '',
         entries: []
       });
     }
-    sortSelectedRatesByPrice();
+    sortRatesByPrice(activeSelected);
     updateAll();
   }
 
@@ -2073,21 +2480,16 @@
   }
 
   function resetAll() {
-    if (!confirm('ล้างค่าเพื่อเริ่มกรอกรายการใหม่?')) return;
-    state.targetTotalQty = 361;
-    state.targetTotalAmount = 8033;
-    state.selectedRates = [
-      { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-      { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] }
-    ];
+    const isEms = state.activeMode === 'ems';
+    if (!confirm('ต้องการล้างค่าเพื่อเริ่มกรอกใบงานใหม่หรือไม่?')) return;
+    state.targetTotalQty = 0;
+    state.targetTotalAmount = 0;
+    setActiveSelectedRates([]);
     state.selectedSolutionIndex = 0;
-    document.getElementById('targetTotalQty').value = 361;
-    document.getElementById('targetTotalAmount').value = 8033;
+    document.getElementById('targetTotalQty').value = '';
+    document.getElementById('targetTotalAmount').value = '';
     updateAll();
+    showToast('ล้างข้อมูลเริ่มใบงานใหม่แล้ว');
   }
 
   function copyText(txt) {
@@ -2095,21 +2497,25 @@
   }
 
   function copySummaryText() {
+    const activeSelected = getActiveSelectedRates();
     const activeSol = currentSolutions[state.selectedSolutionIndex] || {};
-    const lines = [`สรุปรันตามเรทราคา (${state.targetTotalQty} ชิ้น = ${state.targetTotalAmount.toLocaleString()} บาท)`];
-    state.selectedRates.forEach((r, i) => {
+    const serviceName = state.activeMode === 'ems' ? 'EMS ในประเทศ' : 'ไปรษณียภัณฑ์ & พัสดุ';
+    const lines = [`สรุปรันตามเรท [${serviceName}] (${state.targetTotalQty} ชิ้น = ${state.targetTotalAmount.toLocaleString()} บาท)`];
+
+    let rowNum = 1;
+    activeSelected.forEach((r) => {
       const targetQ = activeSol[r.id] !== undefined ? activeSol[r.id] : (r.fixedQty || 0);
       if (targetQ > 0) {
         const entries = r.entries || [];
         const recQ = entries.reduce((acc, e) => acc + (parseInt(e.qty, 10) || 0), 0);
         const statusTxt = recQ >= targetQ ? '✅ ครบแล้ว' : `ลงแล้ว ${recQ}/${targetQ} (เหลือ ${targetQ - recQ})`;
-        lines.push(`${i + 1}. เรท ${r.price}฿${r.isAR ? ' (AR)' : ''}: ${targetQ} ชิ้น = ${(targetQ * r.price).toLocaleString()}฿ [${statusTxt}]`);
+        lines.push(`${rowNum++}. เรท ${r.price}฿${r.isAR ? ' (AR)' : ''}: ${targetQ} ชิ้น = ${(targetQ * r.price).toLocaleString()}฿ [${statusTxt}]`);
         entries.forEach((ent, eIdx) => {
           if (ent.start8 && ent.start8.length === 8) {
             const sNum = parseInt(ent.start8, 10);
             const eNum = sNum + ent.qty - 1;
-            const sObj = formatThaiBarcode(ent.prefix || 'RJ', sNum, 'TH');
-            const eObj = formatThaiBarcode(ent.prefix || 'RJ', eNum, 'TH');
+            const sObj = formatThaiBarcode(ent.prefix || (state.activeMode === 'ems' ? 'ED' : 'RJ'), sNum, 'TH');
+            const eObj = formatThaiBarcode(ent.prefix || (state.activeMode === 'ems' ? 'ED' : 'RJ'), eNum, 'TH');
             lines.push(`   - ชุดที่ ${eIdx + 1}: ${ent.qty} ชิ้น (${(ent.qty * r.price).toLocaleString()}฿) | ${sObj.compact} ถึง ${eObj.compact}`);
           } else {
             lines.push(`   - ชุดที่ ${eIdx + 1}: ${ent.qty} ชิ้น (${(ent.qty * r.price).toLocaleString()}฿)`);
@@ -2117,21 +2523,199 @@
         });
       }
     });
-    navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('คัดลอกสรุปแล้ว'));
+
+    navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('📋 คัดลอกสรุปรายการแล้ว'));
+  }
+
+  /* ===================================================================== */
+  /* HISTORY SYSTEM (บันทึกใบงาน & ดูประวัติย้อนหลัง)                       */
+  /* ===================================================================== */
+  function getHistoryList() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function setHistoryList(list) {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+      updateHistoryCountBadge();
+    } catch (e) {}
+  }
+
+  function updateHistoryCountBadge() {
+    const list = getHistoryList();
+    const count = list.length;
+    const h1 = document.getElementById('headerHistoryCount');
+    const h2 = document.getElementById('barHistoryCount');
+    if (h1) h1.textContent = count;
+    if (h2) h2.textContent = count;
+  }
+
+  function promptSaveCurrentJob() {
+    const totalQty = parseInt(state.targetTotalQty, 10) || 0;
+    const totalAmount = parseFloat(state.targetTotalAmount) || 0;
+    const activeSelected = getActiveSelectedRates();
+
+    if (totalQty <= 0 && activeSelected.length === 0) {
+      showToast('ยังไม่มีข้อมูลที่จะบันทึก');
+      return;
+    }
+
+    const defaultTitle = `${state.activeMode === 'ems' ? 'EMS' : 'ลงทะเบียน'} ${totalQty} ชิ้น (${totalAmount.toLocaleString()}฿)`;
+    const title = prompt('กรุณาระบุชื่อลูกค้า / เลขที่ใบนำส่ง (หรือกดตกลงเพื่อใช้ชื่อเริ่มต้น):', defaultTitle);
+    if (title === null) return; // User canceled
+
+    const d = new Date();
+    const dateFormatted = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+    const newJob = {
+      id: 'job_' + Date.now(),
+      title: title.trim() || defaultTitle,
+      dateStr: dateFormatted,
+      timestamp: Date.now(),
+      mode: state.activeMode,
+      tab: state.currentPresetTab,
+      targetTotalQty: totalQty,
+      targetTotalAmount: totalAmount,
+      selectedRates: JSON.parse(JSON.stringify(activeSelected))
+    };
+
+    const list = getHistoryList();
+    list.unshift(newJob);
+    setHistoryList(list);
+    showToast(`💾 บันทึกใบงาน "${newJob.title}" เรียบร้อยแล้ว!`);
+  }
+
+  function openHistoryModal() {
+    const modal = document.getElementById('historyModal');
+    const body = document.getElementById('historyModalBody');
+    const list = getHistoryList();
+
+    if (list.length === 0) {
+      body.innerHTML = `
+        <div style="text-align:center; padding:30px 10px; color:var(--text-muted);">
+          <div style="font-size:36px; margin-bottom:8px;">📭</div>
+          <div style="font-weight:700; font-size:14px;">ยังไม่มีประวัติใบงานที่บันทึกไว้</div>
+          <div style="font-size:12px; margin-top:4px;">เมื่อคุณกด "💾 บันทึกใบงาน" รายการจะถูกเก็บไว้ที่นี่ เพื่อเปิดดูย้อนหลังได้ตลอดเวลา</div>
+        </div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:12px; color:var(--text-muted);">รายการทั้งหมด ${list.length} ใบงาน</span>
+          <button class="btn-sm danger" style="padding:2px 7px; font-size:11px;" onclick="clearAllHistory()">ล้างประวัติทั้งหมด</button>
+        </div>
+      ` + list.map((item, idx) => {
+        const isEms = item.mode === 'ems';
+        const badgeStyle = isEms
+          ? 'background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;'
+          : 'background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;';
+        const badgeText = isEms ? '⚡ EMS' : '📮 ไปรษณียภัณฑ์';
+
+        return `
+          <div class="history-card">
+            <div class="history-card-top">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:11px; font-weight:800; padding:1px 6px; border-radius:4px; ${badgeStyle}">${badgeText}</span>
+                <b style="font-size:14px; color:#0f172a;">${item.title}</b>
+              </div>
+              <span style="font-size:11.5px; color:var(--text-muted);">${item.dateStr}</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:700;">
+              <span>ยอดรวม: <span style="color:var(--secondary);">${item.targetTotalQty} ชิ้น</span></span>
+              <span>เป็นเงิน: <span style="color:var(--primary-dark);">${(item.targetTotalAmount || 0).toLocaleString()} บาท</span></span>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:6px; border-top:1px dashed #cbd5e1; padding-top:6px;">
+              <button class="btn-sm" style="font-size:11.5px;" onclick="copyHistorySummary('${item.id}')">📋 คัดลอกสรุป</button>
+              <button class="btn-sm primary" style="font-size:11.5px;" onclick="restoreHistoryJob('${item.id}')">📥 โหลดขึ้นมาทำต่อ</button>
+              <button class="btn-sm danger" style="padding:2px 6px; font-size:11px;" onclick="deleteHistoryJob('${item.id}')">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    modal.classList.add('open');
+  }
+
+  function closeHistoryModal() {
+    document.getElementById('historyModal').classList.remove('open');
+  }
+
+  function closeHistoryModalOnBackdrop(e) {
+    if (e.target.id === 'historyModal') closeHistoryModal();
+  }
+
+  function restoreHistoryJob(jobId) {
+    const list = getHistoryList();
+    const job = list.find(j => j.id === jobId);
+    if (!job) return;
+
+    if (!confirm(`ต้องการโหลดใบงาน "${job.title}" ขึ้นมาหน้าจอหลักหรือไม่?`)) return;
+
+    state.activeMode = job.mode || 'non_ems';
+    state.currentPresetTab = job.tab || (state.activeMode === 'ems' ? 'ems' : 'reg_doc');
+    state.targetTotalQty = job.targetTotalQty || 0;
+    state.targetTotalAmount = job.targetTotalAmount || 0;
+    setActiveSelectedRates(JSON.parse(JSON.stringify(job.selectedRates || [])));
+    state.selectedSolutionIndex = 0;
+
+    document.getElementById('targetTotalQty').value = state.targetTotalQty || '';
+    document.getElementById('targetTotalAmount').value = state.targetTotalAmount || '';
+
+    switchServiceTab(state.currentPresetTab);
+    closeHistoryModal();
+    showToast(`📥 โหลดใบงาน "${job.title}" เรียบร้อยแล้ว`);
+  }
+
+  function deleteHistoryJob(jobId) {
+    if (!confirm('ต้องการลบประวัติใบงานนี้หรือไม่?')) return;
+    let list = getHistoryList();
+    list = list.filter(j => j.id !== jobId);
+    setHistoryList(list);
+    openHistoryModal();
+    showToast('ลบประวัติแล้ว');
+  }
+
+  function clearAllHistory() {
+    if (!confirm('ต้องการลบประวัติใบงานทั้งหมดหรือไม่?')) return;
+    setHistoryList([]);
+    openHistoryModal();
+    showToast('ล้างประวัติทั้งหมดแล้ว');
+  }
+
+  function copyHistorySummary(jobId) {
+    const list = getHistoryList();
+    const job = list.find(j => j.id === jobId);
+    if (!job) return;
+
+    const lines = [`สรุปใบงาน: ${job.title} (${job.dateStr})`];
+    lines.push(`ยอดรวม: ${job.targetTotalQty} ชิ้น = ${(job.targetTotalAmount || 0).toLocaleString()} บาท`);
+    (job.selectedRates || []).forEach((r, i) => {
+      lines.push(`${i+1}. เรท ${r.price}฿${r.isAR ? ' (AR)' : ''}: ${r.entries ? r.entries.reduce((a,b)=>a+(b.qty||0),0) : 0} ชิ้น`);
+    });
+
+    navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('คัดลอกสรุปใบงานแล้ว'));
   }
 
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
+    setTimeout(() => t.classList.remove('show'), 2400);
   }
 
   window.addEventListener('DOMContentLoaded', () => {
     loadState();
-    document.getElementById('targetTotalQty').value = state.targetTotalQty;
-    document.getElementById('targetTotalAmount').value = state.targetTotalAmount;
-    updateAll();
+    document.getElementById('targetTotalQty').value = state.targetTotalQty || '';
+    document.getElementById('targetTotalAmount').value = state.targetTotalAmount || '';
+    switchServiceTab(state.currentPresetTab || 'reg_doc');
   });
 </script>
 </body>
