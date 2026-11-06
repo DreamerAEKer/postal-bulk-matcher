@@ -871,6 +871,36 @@
       flex-wrap: wrap;
     }
 
+    
+    .del-cust-pill {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(220, 38, 38, 0.85);
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .del-cust-pill:hover {
+      background: #dc2626;
+    }
+
+    .onpage-history-card {
+      background: white;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
     /* BOTTOM FLOATING BAR FOR MOBILE */
     .mobile-bottom-bar {
       position: fixed;
@@ -1083,13 +1113,13 @@
     <div class="top-inputs-grid">
       <div class="stat-input-card">
         <label for="targetTotalQty">📦 จำนวนชิ้นรวม (ชิ้น)</label>
-        <input type="number" id="targetTotalQty" inputmode="numeric" min="1" placeholder="0" value="361" oninput="onTargetInput()">
+        <input type="number" id="targetTotalQty" inputmode="numeric" min="1" placeholder="ระบุจำนวนชิ้น" value="" oninput="onTargetInput()">
         <div class="stat-sub">จำนวนฉบับ/ชิ้นทั้งหมด</div>
       </div>
 
       <div class="stat-input-card amount-card">
         <label for="targetTotalAmount">💰 ค่าบริการรวม (บาท)</label>
-        <input type="number" id="targetTotalAmount" inputmode="decimal" min="0" placeholder="0" value="8033" oninput="onTargetInput()">
+        <input type="number" id="targetTotalAmount" inputmode="decimal" min="0" placeholder="ระบุยอดเงินรวม" value="" oninput="onTargetInput()">
         <div class="stat-sub" id="avgPriceLabel">เฉลี่ย 22.25 ฿/ชิ้น</div>
       </div>
     </div>
@@ -1148,6 +1178,31 @@
   </div>
 
   <!-- ===================================================================== -->
+  
+  <!-- ===================================================================== -->
+  <!-- ส่วนประวัติใบงานที่บันทึกไว้ (เรียกกลับมาทำต่อได้ตลอดเวลา)            -->
+  <!-- ===================================================================== -->
+  <div class="card" id="onPageHistoryCard">
+    <div class="section-head" style="margin-bottom:6px;">
+      <div class="section-title">
+        <span>📂</span>
+        <span>ประวัติใบงานที่บันทึกไว้ (<span id="onPageHistoryCount">0</span>)</span>
+      </div>
+      <div style="display:flex; gap:5px;">
+        <button class="btn-sm success" onclick="promptSaveCurrentJob()">💾 บันทึกงานนี้</button>
+        <button class="btn-sm" onclick="toggleOnPageHistoryCollapse()">
+          <span id="onPageHistoryToggleText">ซ่อน/แสดง ▾</span>
+        </button>
+      </div>
+    </div>
+    <div id="onPageHistoryListWrap">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
+        คุณสามารถกด <b>"📥 เรียกมาทำต่อ"</b> เพื่อนำข้อมูลกลับมาหน้าจอและคีย์งานต่อได้ทันที
+      </div>
+      <div id="onPageHistoryList"></div>
+    </div>
+  </div>
+
   <!-- ส่วนที่ 2: สรุปรันตามเรทราคา (แสดงเฉพาะเรทที่เลือก/แจงเท่านั้น)             -->
   <!-- ===================================================================== -->
   <div class="card">
@@ -1337,18 +1392,12 @@
     activeMode: 'non_ems', // 'ems' or 'non_ems'
     useFuelCharge: true,
     showPosLog: false,
-    targetTotalQty: 361,
-    targetTotalAmount: 8033,
+    showOnPageHistory: true,
+    targetTotalQty: 0,
+    targetTotalAmount: 0,
     customRates: [],
     selectedRatesByMode: {
-      non_ems: [
-        { id: 'r19', price: 19, label: 'ลงทะเบียน พิกัด 1', isAR: false, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-        { id: 'r22ar', price: 22, label: '19 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-        { id: 'r24', price: 24, label: 'ลงทะเบียน พิกัด 2', isAR: false, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-        { id: 'r27ar', price: 27, label: '24 + ตอบรับ AR 3฿', isAR: true, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-        { id: 'r30', price: 30, label: 'ลงทะเบียน 30฿', isAR: false, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] },
-        { id: 'r77', price: 77, label: 'ลงทะเบียน 77฿', isAR: false, mode: 'non_ems', fixedQty: null, expanded: false, draftPrefix: 'RJ', draftStart8: '', entries: [] }
-      ],
+      non_ems: [],
       ems: []
     },
     selectedSolutionIndex: 0
@@ -1659,8 +1708,12 @@
           qtyBadge = `<span class="r-qty-badge">${q.toLocaleString()} ชิ้น</span>`;
         }
       }
+      const delCustBtn = item.id.startsWith('cust_')
+        ? `<button class="del-cust-pill" onclick="event.stopPropagation(); deleteCustomRate('${item.id}')" title="ลบเรทนี้">✕</button>`
+        : '';
       return `
         <div class="rate-btn ${isSel ? 'active' : ''}" onclick="toggleSelectRate('${item.id}')">
+          ${delCustBtn}
           <div class="r-price">
             <span>${item.price}฿</span>
             ${item.isAR ? '<span class="badge-ar">AR</span>' : ''}
@@ -2420,6 +2473,17 @@
     renderMainSolver();
   }
 
+  
+  function deleteCustomRate(id) {
+    if (!confirm('ต้องการลบเรทที่เพิ่มเองนี้หรือไม่?')) return;
+    state.customRates = state.customRates.filter(r => r.id !== id);
+    ['non_ems', 'ems'].forEach(m => {
+      state.selectedRatesByMode[m] = (state.selectedRatesByMode[m] || []).filter(r => r.id !== id);
+    });
+    updateAll();
+    showToast('ลบเรทที่เพิ่มเองแล้ว');
+  }
+
   function addCustomRate() {
     const pEl = document.getElementById('customRatePrice');
     const lEl = document.getElementById('customRateLabel');
@@ -2479,9 +2543,49 @@
     updateAll();
   }
 
+  function autoSaveCurrentJobSnapshot() {
+    const totalQty = parseInt(state.targetTotalQty, 10) || 0;
+    const totalAmount = parseFloat(state.targetTotalAmount) || 0;
+    const activeSelected = getActiveSelectedRates();
+    if (totalQty <= 0 && totalAmount <= 0 && activeSelected.length === 0) return;
+
+    const d = new Date();
+    const dateFormatted = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const defaultTitle = `${state.activeMode === 'ems' ? 'EMS' : 'ลงทะเบียน'} ${totalQty} ชิ้น (${totalAmount.toLocaleString()}฿)`;
+
+    const newJob = {
+      id: 'job_' + Date.now(),
+      title: defaultTitle,
+      dateStr: dateFormatted,
+      timestamp: Date.now(),
+      mode: state.activeMode,
+      tab: state.currentPresetTab,
+      targetTotalQty: totalQty,
+      targetTotalAmount: totalAmount,
+      selectedRates: JSON.parse(JSON.stringify(activeSelected))
+    };
+
+    const list = getHistoryList();
+    list.unshift(newJob);
+    setHistoryList(list);
+  }
+
   function resetAll() {
-    const isEms = state.activeMode === 'ems';
-    if (!confirm('ต้องการล้างค่าเพื่อเริ่มกรอกใบงานใหม่หรือไม่?')) return;
+    const totalQty = parseInt(state.targetTotalQty, 10) || 0;
+    const totalAmount = parseFloat(state.targetTotalAmount) || 0;
+    const activeSelected = getActiveSelectedRates();
+    const hasWork = totalQty > 0 || totalAmount > 0 || activeSelected.some(r => (r.entries || []).length > 0);
+
+    if (hasWork) {
+      const wantSave = confirm('ต้องการบันทึกใบงานปัจจุบันลงใน "ประวัติ" ก่อนเริ่มใหม่หรือไม่?\n\n• กด [ตกลง / OK] = บันทึกเก็บไว้ในประวัติ (สามารถเรียกกลับมาทำต่อได้ภายหลัง)\n• กด [ยกเลิก / Cancel] = ล้างทิ้งทันที');
+      if (wantSave) {
+        autoSaveCurrentJobSnapshot();
+        showToast('💾 บันทึกใบงานเดิมลงประวัติแล้ว');
+      }
+    } else {
+      if (!confirm('ล้างข้อมูลเพื่อเริ่มใบงานใหม่?')) return;
+    }
+
     state.targetTotalQty = 0;
     state.targetTotalAmount = 0;
     setActiveSelectedRates([]);
@@ -2489,7 +2593,8 @@
     document.getElementById('targetTotalQty').value = '';
     document.getElementById('targetTotalAmount').value = '';
     updateAll();
-    showToast('ล้างข้อมูลเริ่มใบงานใหม่แล้ว');
+    renderHistorySection();
+    showToast('✨ หน้าจอว่างพร้อมเริ่มใบงานใหม่');
   }
 
   function copyText(txt) {
@@ -2546,6 +2651,81 @@
     } catch (e) {}
   }
 
+  
+  function toggleOnPageHistoryCollapse() {
+    state.showOnPageHistory = !state.showOnPageHistory;
+    const wrap = document.getElementById('onPageHistoryListWrap');
+    const txt = document.getElementById('onPageHistoryToggleText');
+    if (wrap) wrap.style.display = state.showOnPageHistory ? 'block' : 'none';
+    if (txt) txt.textContent = state.showOnPageHistory ? 'ซ่อน ▴' : 'แสดง ▾';
+    saveState();
+  }
+
+  function renderHistorySection() {
+    const list = getHistoryList();
+    const onPageList = document.getElementById('onPageHistoryList');
+    const badge1 = document.getElementById('headerHistoryCount');
+    const badge2 = document.getElementById('barHistoryCount');
+    const badge3 = document.getElementById('onPageHistoryCount');
+
+    if (badge1) badge1.textContent = list.length;
+    if (badge2) badge2.textContent = list.length;
+    if (badge3) badge3.textContent = list.length;
+
+    if (!onPageList) return;
+
+    if (list.length === 0) {
+      onPageList.innerHTML = `
+        <div style="text-align:center; padding:14px 8px; color:var(--text-muted); font-size:12.5px;">
+          📭 ยังไม่มีใบงานในประวัติ (เมื่อคุณกด "💾 บันทึกใบงาน" รายการจะถูกเก็บไว้ที่นี่ เพื่อให้กด <b>"📥 เรียกมาทำต่อ"</b> ได้ภายหลัง)
+        </div>
+      `;
+      return;
+    }
+
+    onPageList.innerHTML = list.slice(0, 5).map(item => {
+      const isEms = item.mode === 'ems';
+      const badgeStyle = isEms
+        ? 'background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;'
+        : 'background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;';
+      const badgeText = isEms ? '⚡ EMS' : '📮 ไปรษณียภัณฑ์';
+
+      const totalRecorded = (item.selectedRates || []).reduce((acc, r) => {
+        return acc + (r.entries ? r.entries.reduce((a, b) => a + (b.qty || 0), 0) : 0);
+      }, 0);
+      const isDone = item.targetTotalQty > 0 && totalRecorded >= item.targetTotalQty;
+
+      return `
+        <div class="history-card" style="margin-bottom:8px;">
+          <div class="history-card-top">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:11px; font-weight:800; padding:1px 6px; border-radius:4px; ${badgeStyle}">${badgeText}</span>
+              <b style="font-size:13.5px; color:#0f172a;">${item.title}</b>
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">${item.dateStr}</span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12.5px; font-weight:700; margin-top:2px;">
+            <span>ยอด: <b style="color:var(--secondary);">${item.targetTotalQty} ชิ้น</b> = <b style="color:var(--primary-dark);">${(item.targetTotalAmount || 0).toLocaleString()} ฿</b></span>
+            <span style="font-size:11.5px; color:${isDone ? 'var(--success)' : '#b45309'};">${isDone ? '✅ ลงครบแล้ว' : `ลงแล้ว ${totalRecorded}/${item.targetTotalQty}`}</span>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:5px; margin-top:6px; border-top:1px dashed #cbd5e1; padding-top:6px;">
+            <button class="btn-sm" style="font-size:11px; padding:3px 7px;" onclick="copyHistorySummary('${item.id}')">📋 คัดลอก</button>
+            <button class="btn-sm primary" style="font-size:12px; font-weight:800; padding:4px 10px; background:#1d4ed8; color:white;" onclick="restoreHistoryJob('${item.id}')">
+              📥 เรียกมาทำต่อ
+            </button>
+            <button class="btn-sm danger" style="padding:3px 6px; font-size:11px;" onclick="deleteHistoryJob('${item.id}')">🗑️</button>
+          </div>
+        </div>
+      `;
+    }).join('') + (list.length > 5 ? `
+      <div style="text-align:center; margin-top:6px;">
+        <button class="btn-sm" onclick="openHistoryModal()">ดูประวัติทั้งหมด (${list.length} รายการ) ▾</button>
+      </div>
+    ` : '');
+  }
+
   function updateHistoryCountBadge() {
     const list = getHistoryList();
     const count = list.length;
@@ -2553,6 +2733,7 @@
     const h2 = document.getElementById('barHistoryCount');
     if (h1) h1.textContent = count;
     if (h2) h2.textContent = count;
+    renderHistorySection();
   }
 
   function promptSaveCurrentJob() {
@@ -2713,9 +2894,10 @@
 
   window.addEventListener('DOMContentLoaded', () => {
     loadState();
-    document.getElementById('targetTotalQty').value = state.targetTotalQty || '';
-    document.getElementById('targetTotalAmount').value = state.targetTotalAmount || '';
+    document.getElementById('targetTotalQty').value = (state.targetTotalQty && state.targetTotalQty > 0) ? state.targetTotalQty : '';
+    document.getElementById('targetTotalAmount').value = (state.targetTotalAmount && state.targetTotalAmount > 0) ? state.targetTotalAmount : '';
     switchServiceTab(state.currentPresetTab || 'reg_doc');
+    renderHistorySection();
   });
 </script>
 </body>
